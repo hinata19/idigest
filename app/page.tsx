@@ -4,16 +4,18 @@ import InboxUXPanel from '@/components/InboxUXPanel'
 import OrchestrationPanel from '@/components/OrchestrationPanel'
 import FrequencyPanel from '@/components/FrequencyPanel'
 import SimulatorPanel from '@/components/SimulatorPanel'
+import SmartBundlePanel from '@/components/SmartBundlePanel'
 
 const subTabs = [
   { id: 'simulator' as const, label: '🧪 Notification Simulator', desc: 'Giả lập 7 ngày gửi noti' },
   { id: 'inbox' as const, label: '📱 Inbox UX Redesign', desc: 'Giao diện inbox mới cho KH' },
   { id: 'orchestration' as const, label: '🔄 Campaign Orchestration', desc: 'Quy trình gửi campaign' },
   { id: 'rules' as const, label: '🛡️ Frequency & Rules', desc: 'Quản lý tần suất gửi' },
+  { id: 'smartbundle' as const, label: '🚀 Smart Bundle Engine', desc: 'Mô hình Alipay — Multi-signal' },
 ]
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'simulator' | 'inbox' | 'orchestration' | 'rules'>('simulator')
+  const [activeTab, setActiveTab] = useState<'simulator' | 'inbox' | 'orchestration' | 'rules' | 'smartbundle'>('simulator')
 
   return (
     <div className="min-h-screen" style={{ background: '#f8fafc' }}>
@@ -56,6 +58,7 @@ export default function Home() {
           {activeTab === 'inbox' && <InboxUXPanel />}
           {activeTab === 'orchestration' && <OrchestrationPanel />}
           {activeTab === 'rules' && <FrequencyPanel />}
+          {activeTab === 'smartbundle' && <SmartBundlePanel />}
         </div>
       </div>
     </div>

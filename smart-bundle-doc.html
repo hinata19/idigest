@@ -1,0 +1,646 @@
+<title>Smart Bundle Engine — TCBS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #FAFAF8;
+  --bg-card: #FFFFFF;
+  --bg-inset: #F3F2EE;
+  --text-1: #1A1A18;
+  --text-2: #5C5B56;
+  --text-3: #8E8D88;
+  --border: #E5E4DF;
+  --border-strong: #D1D0CA;
+  --accent: #534AB7;
+  --accent-soft: #EEEDFE;
+  --accent-text: #3C3489;
+  --green: #0F6E56;
+  --green-soft: #E1F5EE;
+  --green-text: #085041;
+  --amber: #9A6B10;
+  --amber-soft: #FDF4E0;
+  --amber-text: #6B4A08;
+  --red: #A32D2D;
+  --red-soft: #FCEBEB;
+  --red-text: #791F1F;
+  --blue: #185FA5;
+  --blue-soft: #E6F1FB;
+  --blue-text: #0C447C;
+  --pink: #993556;
+  --pink-soft: #FBEAF0;
+  --cyan: #0E7490;
+  --cyan-soft: #ECFEFF;
+  --coral: #993C1D;
+  --coral-soft: #FFF7ED;
+  --font: 'Inter', -apple-system, system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141413;
+    --bg-card: #1C1C1A;
+    --bg-inset: #232321;
+    --text-1: #ECECEA;
+    --text-2: #A3A29D;
+    --text-3: #6E6D68;
+    --border: #2E2E2B;
+    --border-strong: #3D3D39;
+    --accent: #AFA9EC;
+    --accent-soft: #26215C;
+    --accent-text: #CECBF6;
+    --green: #5DCAA5;
+    --green-soft: #04342C;
+    --green-text: #9FE1CB;
+    --amber: #FAC775;
+    --amber-soft: #412402;
+    --amber-text: #FAEEDA;
+    --red: #F09595;
+    --red-soft: #501313;
+    --red-text: #F7C1C1;
+    --blue: #85B7EB;
+    --blue-soft: #042C53;
+    --blue-text: #B5D4F4;
+    --pink: #ED93B1;
+    --pink-soft: #4B1528;
+    --cyan: #67E8F9;
+    --cyan-soft: #164E63;
+    --coral: #F0997B;
+    --coral-soft: #4A1B0C;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141413;
+  --bg-card: #1C1C1A;
+  --bg-inset: #232321;
+  --text-1: #ECECEA;
+  --text-2: #A3A29D;
+  --text-3: #6E6D68;
+  --border: #2E2E2B;
+  --border-strong: #3D3D39;
+  --accent: #AFA9EC;
+  --accent-soft: #26215C;
+  --accent-text: #CECBF6;
+  --green: #5DCAA5;
+  --green-soft: #04342C;
+  --green-text: #9FE1CB;
+  --amber: #FAC775;
+  --amber-soft: #412402;
+  --amber-text: #FAEEDA;
+  --red: #F09595;
+  --red-soft: #501313;
+  --red-text: #F7C1C1;
+  --blue: #85B7EB;
+  --blue-soft: #042C53;
+  --blue-text: #B5D4F4;
+  --pink: #ED93B1;
+  --pink-soft: #4B1528;
+  --cyan: #67E8F9;
+  --cyan-soft: #164E63;
+  --coral: #F0997B;
+  --coral-soft: #4A1B0C;
+}
+:root[data-theme="light"] {
+  --bg: #FAFAF8;
+  --bg-card: #FFFFFF;
+  --bg-inset: #F3F2EE;
+  --text-1: #1A1A18;
+  --text-2: #5C5B56;
+  --text-3: #8E8D88;
+  --border: #E5E4DF;
+  --border-strong: #D1D0CA;
+  --accent: #534AB7;
+  --accent-soft: #EEEDFE;
+  --accent-text: #3C3489;
+  --green: #0F6E56;
+  --green-soft: #E1F5EE;
+  --green-text: #085041;
+  --amber: #9A6B10;
+  --amber-soft: #FDF4E0;
+  --amber-text: #6B4A08;
+  --red: #A32D2D;
+  --red-soft: #FCEBEB;
+  --red-text: #791F1F;
+  --blue: #185FA5;
+  --blue-soft: #E6F1FB;
+  --blue-text: #0C447C;
+  --pink: #993556;
+  --pink-soft: #FBEAF0;
+  --cyan: #0E7490;
+  --cyan-soft: #ECFEFF;
+  --coral: #993C1D;
+  --coral-soft: #FFF7ED;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); color: var(--text-1); background: var(--bg); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+
+.wrap { max-width: 780px; margin: 0 auto; padding: 48px 24px 80px; }
+
+/* Header */
+.doc-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 5px 12px; border-radius: 6px; margin-bottom: 16px; }
+.doc-title { font-size: 28px; font-weight: 700; color: var(--text-1); line-height: 1.25; text-wrap: balance; margin-bottom: 8px; letter-spacing: -0.5px; }
+.doc-subtitle { font-size: 15px; color: var(--text-2); margin-bottom: 6px; }
+.doc-meta { font-size: 12px; color: var(--text-3); font-family: var(--mono); margin-bottom: 40px; }
+
+/* Sections */
+.section { margin-bottom: 48px; }
+.section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.section-title { font-size: 20px; font-weight: 600; color: var(--text-1); margin-bottom: 6px; letter-spacing: -0.3px; }
+.section-desc { font-size: 14px; color: var(--text-2); margin-bottom: 20px; line-height: 1.7; }
+
+/* Pipeline */
+.pipeline { display: flex; align-items: center; gap: 0; overflow-x: auto; padding: 4px 0 12px; margin-bottom: 8px; }
+.pipe-step { text-align: center; padding: 10px 14px; border-radius: 10px; flex-shrink: 0; min-width: 88px; }
+.pipe-label { font-size: 11px; font-weight: 600; }
+.pipe-sub { font-size: 10px; margin-top: 2px; }
+.pipe-arrow { flex-shrink: 0; color: var(--text-3); font-size: 14px; padding: 0 2px; }
+.pipe-arrow::after { content: '→'; }
+
+/* KPI row */
+.kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 40px; }
+@media (max-width: 640px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+.kpi { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.kpi-label { font-size: 10px; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; color: var(--text-3); margin-bottom: 4px; }
+.kpi-val { font-size: 22px; font-weight: 700; color: var(--text-1); font-variant-numeric: tabular-nums; }
+.kpi-sub { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+
+/* Scoring */
+.signal-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.signal-chip { font-size: 12px; padding: 5px 12px; border-radius: 6px; font-weight: 500; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-2); }
+.signal-chip b { color: var(--text-1); }
+.formula-box { background: var(--bg-inset); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; font-family: var(--mono); font-size: 13px; color: var(--text-1); margin-bottom: 16px; overflow-x: auto; }
+.formula-box .op { color: var(--accent); font-weight: 600; }
+
+/* Rule cards */
+.rule-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 14px; position: relative; border-left: 3px solid transparent; }
+.rule-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.rule-id { font-family: var(--mono); font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 5px; }
+.rule-name { font-size: 15px; font-weight: 600; color: var(--text-1); }
+.rule-purpose { font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 12px; }
+.rule-params { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+@media (max-width: 500px) { .rule-params { grid-template-columns: 1fr; } }
+.param { background: var(--bg-inset); border-radius: 8px; padding: 8px 12px; }
+.param-k { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.3px; }
+.param-v { font-size: 14px; font-weight: 600; color: var(--text-1); font-variant-numeric: tabular-nums; }
+.rule-example { background: var(--accent-soft); border-radius: 8px; padding: 12px 16px; font-size: 12px; color: var(--accent-text); line-height: 1.7; }
+.rule-example b { font-weight: 600; }
+
+/* Colors per rule */
+.rule-r1 { border-left-color: var(--accent); }
+.rule-r1 .rule-id { background: var(--accent-soft); color: var(--accent); }
+.rule-r2 { border-left-color: var(--blue); }
+.rule-r2 .rule-id { background: var(--blue-soft); color: var(--blue); }
+.rule-r3 { border-left-color: var(--green); }
+.rule-r3 .rule-id { background: var(--green-soft); color: var(--green); }
+.rule-r4 { border-left-color: var(--amber); }
+.rule-r4 .rule-id { background: var(--amber-soft); color: var(--amber); }
+.rule-r5 { border-left-color: var(--red); }
+.rule-r5 .rule-id { background: var(--red-soft); color: var(--red); }
+
+/* Cross-sell matrix */
+.matrix-wrap { overflow-x: auto; margin-bottom: 16px; }
+.matrix { border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; width: 100%; min-width: 580px; }
+.matrix th { font-size: 11px; font-weight: 600; padding: 8px 10px; text-align: center; color: var(--text-2); border-bottom: 1px solid var(--border-strong); background: var(--bg-inset); }
+.matrix th:first-child { text-align: left; min-width: 90px; }
+.matrix td { padding: 7px 10px; text-align: center; border-bottom: 1px solid var(--border); color: var(--text-2); }
+.matrix td:first-child { font-weight: 600; color: var(--text-1); text-align: left; }
+.matrix .high { color: var(--green); font-weight: 600; }
+.matrix .med { color: var(--amber); font-weight: 500; }
+.matrix .null-cell { color: var(--text-3); }
+
+/* Segments */
+.seg-card { display: flex; gap: 16px; align-items: flex-start; padding: 14px 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-card); margin-bottom: 10px; }
+@media (max-width: 600px) { .seg-card { flex-direction: column; gap: 8px; } }
+.seg-left { flex: 1; min-width: 0; }
+.seg-name { font-size: 14px; font-weight: 600; color: var(--text-1); }
+.seg-meta { font-size: 11px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.seg-criteria { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+.seg-bundle { display: flex; align-items: center; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+.seg-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+.seg-arrow { font-size: 10px; color: var(--text-3); }
+.seg-right { flex-shrink: 0; text-align: right; }
+.seg-cross { font-size: 11px; color: var(--text-3); }
+.seg-cross-val { font-size: 12px; font-weight: 600; color: var(--text-1); }
+
+/* Compare */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+@media (max-width: 600px) { .compare { grid-template-columns: 1fr; } }
+.compare-col { border-radius: 12px; padding: 20px; border: 1px solid; }
+.compare-before { border-color: var(--red); background: var(--red-soft); }
+.compare-after { border-color: var(--green); background: var(--green-soft); }
+.compare-title { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 12px; }
+.compare-before .compare-title { color: var(--red); }
+.compare-after .compare-title { color: var(--green); }
+.compare-item { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 1.6; margin-bottom: 6px; }
+.compare-before .compare-item { color: var(--red-text); }
+.compare-after .compare-item { color: var(--green-text); }
+.compare-icon { flex-shrink: 0; margin-top: 3px; font-size: 12px; }
+
+/* Flow */
+.flow { display: flex; gap: 0; align-items: flex-start; overflow-x: auto; padding-bottom: 8px; }
+.flow-step { text-align: center; min-width: 130px; flex-shrink: 0; padding: 16px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-card); }
+.flow-time { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--accent); }
+.flow-label { font-size: 13px; font-weight: 600; color: var(--text-1); margin-top: 4px; }
+.flow-desc { font-size: 11px; color: var(--text-2); margin-top: 4px; line-height: 1.5; }
+.flow-arrow { flex-shrink: 0; display: flex; align-items: center; color: var(--text-3); padding: 0 4px; font-size: 14px; margin-top: 24px; }
+.flow-arrow::after { content: '→'; }
+
+/* Summary table */
+.sum-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sum-table th { text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border-strong); font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.3px; }
+.sum-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-2); vertical-align: top; line-height: 1.6; }
+.sum-table td:first-child { font-weight: 600; color: var(--text-1); font-family: var(--mono); font-size: 12px; }
+.tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+.tag-ux { background: var(--amber-soft); color: var(--amber); }
+.tag-fair { background: var(--blue-soft); color: var(--blue); }
+.tag-protect { background: var(--green-soft); color: var(--green); }
+
+/* Week visual */
+.week { display: flex; gap: 6px; margin: 10px 0; }
+.week-day { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+.week-on { background: var(--green-soft); color: var(--green); border: 1px solid var(--green); }
+.week-off { background: var(--bg-inset); color: var(--text-3); border: 1px solid var(--border); text-decoration: line-through; }
+
+/* Callout */
+.callout { border-radius: 10px; padding: 16px 20px; border: 1px solid var(--border); margin: 20px 0; }
+.callout-accent { background: var(--accent-soft); border-color: var(--accent); }
+.callout-amber { background: var(--amber-soft); border-color: var(--amber); }
+.callout-label { font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+.callout-accent .callout-label { color: var(--accent); }
+.callout-amber .callout-label { color: var(--amber); }
+.callout-text { font-size: 13px; line-height: 1.7; }
+.callout-accent .callout-text { color: var(--accent-text); }
+.callout-amber .callout-text { color: var(--amber-text); }
+
+hr.sep { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+/* Products color badge */
+.p-bond { background: #dbeafe; color: #1d4ed8; }
+.p-fund { background: #dcfce7; color: #15803d; }
+.p-stock { background: #fef3c7; color: #b45309; }
+.p-borrow { background: #fce7f3; color: #be185d; }
+.p-tracker { background: #ede9fe; color: #7c3aed; }
+.p-power { background: var(--cyan-soft); color: var(--cyan); }
+.p-optima { background: var(--coral-soft); color: var(--coral); }
+</style>
+
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="doc-badge">Internal — TCBS / TCinvest</div>
+  <h1 class="doc-title">Smart Bundle Engine</h1>
+  <p class="doc-subtitle">Mô hình Alipay thu gọn — Multi-signal scoring + Re-ranking rules</p>
+  <p class="doc-meta">v1.0 · Cập nhật: 28/07/2026</p>
+
+  <!-- KPI -->
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-label">Sản phẩm</div><div class="kpi-val">7</div><div class="kpi-sub">C(7,3) = 35 bundles</div></div>
+    <div class="kpi"><div class="kpi-label">Segments</div><div class="kpi-val">6</div><div class="kpi-sub">Batch 1 lần/tuần</div></div>
+    <div class="kpi"><div class="kpi-label">DAU</div><div class="kpi-val">100K</div><div class="kpi-sub">A/B test 2-3 ngày</div></div>
+    <div class="kpi"><div class="kpi-label">KH giao dịch</div><div class="kpi-val">500K</div><div class="kpi-sub">Data cross-sell</div></div>
+    <div class="kpi"><div class="kpi-label">Exposure</div><div class="kpi-val">3x</div><div class="kpi-sub">1→3 ngày/tuần</div></div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- Pipeline -->
+  <div class="section">
+    <div class="section-label">Pipeline</div>
+    <div class="section-title">Alipay 3-stage: Recall → Ranking → Re-ranking</div>
+    <div class="section-desc">7 squads submit offers → Engine tính score cho từng KH → Re-ranking rules can thiệp → Mỗi KH nhận 1 bundle chứa 3 offers phù hợp nhất.</div>
+    <div class="pipeline">
+      <div class="pipe-step" style="background:var(--accent-soft);"><div class="pipe-label" style="color:var(--accent);">Recall</div><div class="pipe-sub" style="color:var(--accent-text);">7 SP submit</div></div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step" style="background:var(--amber-soft);"><div class="pipe-label" style="color:var(--amber);">Scoring</div><div class="pipe-sub" style="color:var(--amber-text);">Multi-signal</div></div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step" style="background:var(--green-soft);"><div class="pipe-label" style="color:var(--green);">R1-DIV</div><div class="pipe-sub" style="color:var(--green-text);">Diversity</div></div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step" style="background:var(--blue-soft);"><div class="pipe-label" style="color:var(--blue);">R2-FAIR</div><div class="pipe-sub" style="color:var(--blue-text);">Fairness</div></div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step" style="background:var(--green-soft);"><div class="pipe-label" style="color:var(--green);">R3-FREQ</div><div class="pipe-sub" style="color:var(--green-text);">Frequency</div></div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step" style="background:var(--amber-soft);"><div class="pipe-label" style="color:var(--amber);">R4-DEDUP</div><div class="pipe-sub" style="color:var(--amber-text);">Dedup</div></div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step" style="background:var(--red-soft);"><div class="pipe-label" style="color:var(--red);">R5-COOL</div><div class="pipe-sub" style="color:var(--red-text);">Cooldown</div></div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-step" style="background:var(--green-soft);border:1px solid var(--green);"><div class="pipe-label" style="color:var(--green);">Send</div><div class="pipe-sub" style="color:var(--green-text);">Bundle</div></div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- Multi-signal scoring -->
+  <div class="section">
+    <div class="section-label">Scoring engine</div>
+    <div class="section-title">Multi-signal scoring</div>
+    <div class="section-desc">Score = tổng hợp 5 signals, xếp theo độ tin cậy. Giao dịch thật (35%) và portfolio (25%) chiếm 60% — đảm bảo scoring phản ánh hành vi thực, không phụ thuộc click.</div>
+
+    <div class="signal-row">
+      <div class="signal-chip">Giao dịch <b>35%</b></div>
+      <div class="signal-chip">Portfolio <b>25%</b></div>
+      <div class="signal-chip">App behavior <b>20%</b></div>
+      <div class="signal-chip">Click <b>+12%</b></div>
+      <div class="signal-chip">Dismiss <b>-8%</b></div>
+    </div>
+
+    <div class="formula-box">
+      Score(KH, SP) <span class="op">=</span> Txn<span class="op">×</span>0.35 <span class="op">+</span> Portfolio<span class="op">×</span>0.25 <span class="op">+</span> App<span class="op">×</span>0.20 <span class="op">+</span> Click<span class="op">×</span>0.12 <span class="op">−</span> Dismiss<span class="op">×</span>0.08
+    </div>
+
+    <div class="callout callout-accent">
+      <div class="callout-label">Tại sao không dùng click làm signal chính?</div>
+      <div class="callout-text">Click chỉ phản ánh <b>tò mò</b>, không phản ánh <b>nhu cầu thật</b>. KH click vào Bond promo vì tiêu đề hay, nhưng chưa từng mua Bond và không có trong portfolio. Giao dịch + portfolio = hành vi thật, đáng tin hơn.</div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- Re-ranking rules -->
+  <div class="section">
+    <div class="section-label">Re-ranking</div>
+    <div class="section-title">5 rules can thiệp sau scoring</div>
+    <div class="section-desc">Business rules chạy tuần tự sau khi scoring xong — đảm bảo fairness giữa squads, bảo vệ KH khỏi spam, và loại bỏ nội dung không phù hợp.</div>
+
+    <!-- R1 -->
+    <div class="rule-card rule-r1">
+      <div class="rule-header">
+        <span class="rule-id">R1-DIV</span>
+        <span class="rule-name">Diversity</span>
+      </div>
+      <div class="rule-purpose">Bundle 3 offers <b>phải từ 3 squads khác nhau</b>. Không cho phép 2 offers cùng squad trong 1 bundle.</div>
+      <div class="rule-params">
+        <div class="param"><div class="param-k">Mục tiêu</div><div class="param-v">Đa dạng sản phẩm</div></div>
+        <div class="param"><div class="param-k">Áp dụng khi</div><div class="param-v">Tạo bundle</div></div>
+      </div>
+      <div class="rule-example"><b>Ví dụ:</b> KH Minh top scores: Stock (92), iTracker (68), Stock promo 2 (65) → skip vì trùng squad → chọn iOptima (52). Bundle = Stock + iTracker + iOptima.</div>
+    </div>
+
+    <!-- R2 -->
+    <div class="rule-card rule-r2">
+      <div class="rule-header">
+        <span class="rule-id">R2-FAIR</span>
+        <span class="rule-name">Fairness quota</span>
+      </div>
+      <div class="rule-purpose">Mỗi squad <b>tối thiểu xuất hiện 2 lần/tuần</b> trong các bundles gửi đi. Nếu squad nào chưa đạt quota → boost score +20 để tăng cơ hội được chọn.</div>
+      <div class="rule-params">
+        <div class="param"><div class="param-k">Quota tối thiểu</div><div class="param-v">2 lần/tuần/squad</div></div>
+        <div class="param"><div class="param-k">Boost score</div><div class="param-v">+20 điểm</div></div>
+      </div>
+      <div class="rule-example"><b>Ví dụ:</b> Đến thứ 5, iPower mới xuất hiện 1 lần. Hệ thống tự động boost iPower +20 điểm cho tất cả KH → iPower dễ được chọn vào bundle hơn → đạt quota 2 lần vào cuối tuần.</div>
+    </div>
+
+    <!-- R3 -->
+    <div class="rule-card rule-r3">
+      <div class="rule-header">
+        <span class="rule-id">R3-FREQ</span>
+        <span class="rule-name">Frequency cap</span>
+      </div>
+      <div class="rule-purpose">Giới hạn <b>tối đa 1 bundle/ngày</b> cho mỗi KH. Ngoài ra, <b>skip gửi nếu KH vừa giao dịch trong 4 giờ gần nhất</b> (vì KH đang hoạt động, không cần quảng cáo thêm).</div>
+      <div class="rule-params">
+        <div class="param"><div class="param-k">Max bundle/ngày</div><div class="param-v">1</div></div>
+        <div class="param"><div class="param-k">Skip window</div><div class="param-v">4 giờ sau GD</div></div>
+        <div class="param"><div class="param-k">Bundle/tuần (max)</div><div class="param-v">7</div></div>
+        <div class="param"><div class="param-k">Offers/tuần (max)</div><div class="param-v">21 (7 × 3)</div></div>
+      </div>
+
+      <div style="font-size:12px;color:var(--text-3);margin:12px 0 6px;">Ví dụ 1 tuần của KH Minh (Active Trader, giao dịch thứ 3 và thứ 6):</div>
+      <div class="week">
+        <div class="week-day week-on">T2</div>
+        <div class="week-day week-off">T3</div>
+        <div class="week-day week-on">T4</div>
+        <div class="week-day week-on">T5</div>
+        <div class="week-day week-off">T6</div>
+        <div class="week-day week-on">T7</div>
+        <div class="week-day week-on">CN</div>
+      </div>
+      <div style="font-size:12px;color:var(--text-2);line-height:1.6;">T3 &amp; T6 bị skip vì KH giao dịch trong 4h trước giờ gửi → Thực nhận: <b>5 bundles = 15 offers/tuần</b></div>
+    </div>
+
+    <!-- R4 -->
+    <div class="rule-card rule-r4">
+      <div class="rule-header">
+        <span class="rule-id">R4-DEDUP</span>
+        <span class="rule-name">Dedup 7 ngày</span>
+      </div>
+      <div class="rule-purpose">Cùng 1 offer <b>không hiện quá 2 lần trong 7 ngày</b> cho cùng 1 KH. Tránh lặp đi lặp lại gây khó chịu.</div>
+      <div class="rule-params">
+        <div class="param"><div class="param-k">Max lặp lại</div><div class="param-v">2 lần / 7 ngày</div></div>
+        <div class="param"><div class="param-k">Áp dụng cho</div><div class="param-v">Cùng offer, cùng KH</div></div>
+      </div>
+      <div class="rule-example"><b>Ví dụ:</b> Offer "Bond DCB 8.5% — còn 3 ngày" đã hiện cho KH Lan vào T2 và T4. → Từ T5 đến T2 tuần sau, offer này bị ẩn. Nếu Bond squad có offer <i>khác</i> (VD: "Bond TPBank 9%"), vẫn được hiện bình thường.</div>
+    </div>
+
+    <!-- R5 -->
+    <div class="rule-card rule-r5">
+      <div class="rule-header">
+        <span class="rule-id">R5-COOL</span>
+        <span class="rule-name">Post-action cooldown</span>
+      </div>
+      <div class="rule-purpose">KH <b>vừa mua sản phẩm X</b> → ẩn tất cả offers của squad X trong <b>14 ngày</b>. Không quảng cáo thêm cái KH đã mua.</div>
+      <div class="rule-params">
+        <div class="param"><div class="param-k">Cooldown period</div><div class="param-v">14 ngày</div></div>
+        <div class="param"><div class="param-k">Trigger</div><div class="param-v">KH hoàn thành GD</div></div>
+      </div>
+      <div class="rule-example"><b>Ví dụ:</b> KH Đức mua Fund ngày 1/8. → Từ 1/8 đến 14/8, tất cả Fund offers bị ẩn khỏi bundle của Đức. Slot trống được thay bằng sản phẩm có score cao tiếp theo (VD: iOptima). Sau 15/8, Fund offers được hiện lại.</div>
+    </div>
+
+    <!-- Summary table -->
+    <table class="sum-table">
+      <thead><tr><th>Rule</th><th>Bảo vệ ai?</th><th>Thông số</th><th>Loại</th></tr></thead>
+      <tbody>
+        <tr><td>R1-DIV</td><td>KH (đa dạng nội dung)</td><td>3 offers ≠ 3 squads</td><td><span class="tag tag-ux">UX</span></td></tr>
+        <tr><td>R2-FAIR</td><td>Squad (cơ hội công bằng)</td><td>≥ 2 lần/tuần, boost +20</td><td><span class="tag tag-fair">Fairness</span></td></tr>
+        <tr><td>R3-FREQ</td><td>KH (không spam)</td><td>1 bundle/ngày, skip 4h</td><td><span class="tag tag-protect">Protect</span></td></tr>
+        <tr><td>R4-DEDUP</td><td>KH (không lặp lại)</td><td>≤ 2 lần/7 ngày/offer</td><td><span class="tag tag-ux">UX</span></td></tr>
+        <tr><td>R5-COOL</td><td>KH (không QC đã mua)</td><td>14 ngày sau GD</td><td><span class="tag tag-protect">Protect</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-amber">
+      <div class="callout-label">Tất cả thông số đều có thể tuỳ chỉnh</div>
+      <div class="callout-text">Ops team có thể điều chỉnh: số bundle/ngày, cooldown period, dedup window, fairness quota, skip window. Không cần developer — chỉ cần cập nhật config.</div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- Cross-sell matrix -->
+  <div class="section">
+    <div class="section-label">Data</div>
+    <div class="section-title">Cross-sell matrix (7×7)</div>
+    <div class="section-desc">Từ 500K KH đã giao dịch: "Mua sản phẩm X → bao nhiêu % mua sản phẩm Y trong 3 tháng?" Đây là số ví dụ — TCBS chạy 1 câu SQL trên data thật sẽ có con số chính xác.</div>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead><tr><th>Đã mua ↓</th><th>Bond</th><th>Fund</th><th>Stock</th><th>BorrowLink</th><th>iTracker</th><th>iPower</th><th>iOptima</th></tr></thead>
+        <tbody>
+          <tr><td>Bond</td><td class="null-cell">—</td><td class="med">28%</td><td>12%</td><td class="high">42%</td><td>8%</td><td class="med">30%</td><td>15%</td></tr>
+          <tr><td>Fund</td><td class="med">25%</td><td class="null-cell">—</td><td class="med">22%</td><td class="med">30%</td><td>15%</td><td class="med">25%</td><td class="high">35%</td></tr>
+          <tr><td>Stock</td><td>15%</td><td>18%</td><td class="null-cell">—</td><td>10%</td><td class="high">55%</td><td>8%</td><td class="med">28%</td></tr>
+          <tr><td>BorrowLink</td><td class="high">38%</td><td class="med">20%</td><td>8%</td><td class="null-cell">—</td><td>5%</td><td class="high">45%</td><td>12%</td></tr>
+          <tr><td>iTracker</td><td>10%</td><td>12%</td><td class="high">62%</td><td>8%</td><td class="null-cell">—</td><td>6%</td><td class="med">22%</td></tr>
+          <tr><td>iPower</td><td class="med">25%</td><td>18%</td><td>6%</td><td class="high">48%</td><td>5%</td><td class="null-cell">—</td><td>10%</td></tr>
+          <tr><td>iOptima</td><td>18%</td><td class="high">40%</td><td class="med">32%</td><td>15%</td><td class="med">20%</td><td>12%</td><td class="null-cell">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--text-3);display:flex;gap:16px;flex-wrap:wrap;">
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);vertical-align:middle;margin-right:4px;"></span>≥ 35% (cao)</span>
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);vertical-align:middle;margin-right:4px;"></span>20-34% (TB)</span>
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--text-3);vertical-align:middle;margin-right:4px;"></span>&lt; 20% (thấp)</span>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- Segments -->
+  <div class="section">
+    <div class="section-label">Segments</div>
+    <div class="section-title">6 customer segments</div>
+    <div class="section-desc">500K KH phân thành 6 segments — mỗi segment map sang 1 bundle template mặc định. Scoring sẽ cá nhân hoá thêm cho từng KH.</div>
+
+    <div class="seg-card">
+      <div class="seg-left">
+        <div class="seg-name">Active Trader</div>
+        <div class="seg-meta">60,000 KH (12%)</div>
+        <div class="seg-criteria">Trade > 5 lần/tháng, mở bảng giá hàng ngày</div>
+        <div class="seg-bundle">
+          <span>Bundle:</span>
+          <span class="seg-badge p-stock">Stock</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-tracker">iTracker</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-optima">iOptima</span>
+        </div>
+      </div>
+      <div class="seg-right"><div class="seg-cross">Cross-sell</div><div class="seg-cross-val">Stock → iTracker (55%)</div></div>
+    </div>
+
+    <div class="seg-card">
+      <div class="seg-left">
+        <div class="seg-name">Conservative</div>
+        <div class="seg-meta">100,000 KH (20%)</div>
+        <div class="seg-criteria">Hold Bond/BorrowLink > 70% portfolio, trade < 2 lần/tháng</div>
+        <div class="seg-bundle">
+          <span>Bundle:</span>
+          <span class="seg-badge p-bond">Bond</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-borrow">BorrowLink</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-fund">Fund</span>
+        </div>
+      </div>
+      <div class="seg-right"><div class="seg-cross">Cross-sell</div><div class="seg-cross-val">Bond → BorrowLink (42%)</div></div>
+    </div>
+
+    <div class="seg-card">
+      <div class="seg-left">
+        <div class="seg-name">Balanced</div>
+        <div class="seg-meta">80,000 KH (16%)</div>
+        <div class="seg-criteria">Hold > 2 loại SP, không loại nào > 60%</div>
+        <div class="seg-bundle">
+          <span>Bundle:</span>
+          <span class="seg-badge p-fund">Fund</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-bond">Bond</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-optima">iOptima</span>
+        </div>
+      </div>
+      <div class="seg-right"><div class="seg-cross">Cross-sell</div><div class="seg-cross-val">Đa dạng, ưu tiên SP chưa có</div></div>
+    </div>
+
+    <div class="seg-card">
+      <div class="seg-left">
+        <div class="seg-name">Saver</div>
+        <div class="seg-meta">70,000 KH (14%)</div>
+        <div class="seg-criteria">BorrowLink/iPower > 50% portfolio, ít trade</div>
+        <div class="seg-bundle">
+          <span>Bundle:</span>
+          <span class="seg-badge p-borrow">BorrowLink</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-power">iPower</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-bond">Bond</span>
+        </div>
+      </div>
+      <div class="seg-right"><div class="seg-cross">Cross-sell</div><div class="seg-cross-val">BorrowLink → iPower (45%)</div></div>
+    </div>
+
+    <div class="seg-card">
+      <div class="seg-left">
+        <div class="seg-name">Newcomer</div>
+        <div class="seg-meta">90,000 KH (18%)</div>
+        <div class="seg-criteria">TK < 3 tháng, < 3 giao dịch</div>
+        <div class="seg-bundle">
+          <span>Bundle:</span>
+          <span class="seg-badge p-power">iPower</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-fund">Fund</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-borrow">BorrowLink</span>
+        </div>
+      </div>
+      <div class="seg-right"><div class="seg-cross">Cross-sell</div><div class="seg-cross-val">Nurture SP entry thấp</div></div>
+    </div>
+
+    <div class="seg-card">
+      <div class="seg-left">
+        <div class="seg-name">Dormant</div>
+        <div class="seg-meta">100,000 KH (20%)</div>
+        <div class="seg-criteria">Không GD > 3 tháng, login < 2 lần/tháng</div>
+        <div class="seg-bundle">
+          <span>Bundle:</span>
+          <span class="seg-badge p-power">iPower</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-borrow">BorrowLink</span><span class="seg-arrow">→</span>
+          <span class="seg-badge p-fund">Fund</span>
+        </div>
+      </div>
+      <div class="seg-right"><div class="seg-cross">Cross-sell</div><div class="seg-cross-val">Gentle re-engage</div></div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- Compare -->
+  <div class="section">
+    <div class="section-label">So sánh</div>
+    <div class="section-title">Hiện tại vs Smart Bundle</div>
+    <div class="section-desc">So sánh mô hình cũ (bao gồm cả workaround marketing đang gộp thủ công) với Smart Bundle Engine.</div>
+
+    <div class="compare">
+      <div class="compare-col compare-before">
+        <div class="compare-title">Hiện tại — Fixed rotation + Marketing gộp thủ công</div>
+        <div class="compare-item"><span class="compare-icon">✕</span>1 squad/ngày cố định (T2 Bond, T3 Fund...)</div>
+        <div class="compare-item"><span class="compare-icon">✕</span>Marketing tự gộp nội dung → 1 bản chung cho 100K KH</div>
+        <div class="compare-item"><span class="compare-icon">✕</span>Không personalize — ai cũng nhận giống nhau</div>
+        <div class="compare-item"><span class="compare-icon">✕</span>Không attribution — click vào bundle nhưng không biết vì offer nào</div>
+        <div class="compare-item"><span class="compare-icon">✕</span>Marketing phải đóng vai "trọng tài" — vẫn conflict</div>
+        <div class="compare-item"><span class="compare-icon">✕</span>Không scale — phụ thuộc 1 người làm thủ công mỗi ngày</div>
+        <div class="compare-item"><span class="compare-icon">✕</span>Squad exposure: 1 ngày/tuần</div>
+      </div>
+      <div class="compare-col compare-after">
+        <div class="compare-title">Smart Bundle — Multi-signal + Segments</div>
+        <div class="compare-item"><span class="compare-icon">✓</span>3 squads/ngày, dynamic theo từng KH</div>
+        <div class="compare-item"><span class="compare-icon">✓</span>100K bundles khác nhau cho 100K KH — personalized</div>
+        <div class="compare-item"><span class="compare-icon">✓</span>Mỗi KH nhận bundle phù hợp segment + portfolio</div>
+        <div class="compare-item"><span class="compare-icon">✓</span>Click per offer = attribution rõ ràng cho từng squad</div>
+        <div class="compare-item"><span class="compare-icon">✓</span>Rules tự động — zero conflict giữa squads</div>
+        <div class="compare-item"><span class="compare-icon">✓</span>Tự động 100% — ops chỉ cần review 1 lần lúc 18:00</div>
+        <div class="compare-item"><span class="compare-icon">✓</span>Squad exposure: 3 ngày/tuần (tăng 3x)</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- Daily flow -->
+  <div class="section">
+    <div class="section-label">Vận hành</div>
+    <div class="section-title">Quy trình hàng ngày</div>
+
+    <div class="flow">
+      <div class="flow-step"><div class="flow-time">16:00</div><div class="flow-label">Squads submit</div><div class="flow-desc">Mỗi squad gửi 1-2 offers cho ngày mai</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-step"><div class="flow-time">17:00</div><div class="flow-label">Engine scoring</div><div class="flow-desc">Tính score per offer × per KH. Apply re-ranking</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-step"><div class="flow-time">18:00</div><div class="flow-label">Ops review</div><div class="flow-desc">Team vận hành xem preview, confirm hoặc override</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-step"><div class="flow-time">09:00</div><div class="flow-label">Send bundles</div><div class="flow-desc">1 notification/KH chứa 3 offers. Push + inbox</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-step"><div class="flow-time">Realtime</div><div class="flow-label">Collect signals</div><div class="flow-desc">Click/dismiss → cập nhật score cho ngày tiếp</div></div>
+    </div>
+  </div>
+
+</div>
