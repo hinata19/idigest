@@ -5,6 +5,7 @@ import OrchestrationPanel from '@/components/OrchestrationPanel'
 import FrequencyPanel from '@/components/FrequencyPanel'
 import SimulatorPanel from '@/components/SimulatorPanel'
 import SmartBundlePanel from '@/components/SmartBundlePanel'
+import SmartBundleDocPanel from '@/components/SmartBundleDocPanel'
 
 const subTabs = [
   { id: 'simulator' as const, label: '🧪 Notification Simulator', desc: 'Giả lập 7 ngày gửi noti' },
@@ -12,10 +13,11 @@ const subTabs = [
   { id: 'orchestration' as const, label: '🔄 Campaign Orchestration', desc: 'Quy trình gửi campaign' },
   { id: 'rules' as const, label: '🛡️ Frequency & Rules', desc: 'Quản lý tần suất gửi' },
   { id: 'smartbundle' as const, label: '🚀 Smart Bundle Engine', desc: 'Mô hình Alipay — Multi-signal' },
+  { id: 'bundledoc' as const, label: '📖 Bundle — Chi tiết', desc: 'Scoring, Dismiss, Rules, Alibaba' },
 ]
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'simulator' | 'inbox' | 'orchestration' | 'rules' | 'smartbundle'>('simulator')
+  const [activeTab, setActiveTab] = useState<'simulator' | 'inbox' | 'orchestration' | 'rules' | 'smartbundle' | 'bundledoc'>('simulator')
 
   return (
     <div className="min-h-screen" style={{ background: '#f8fafc' }}>
@@ -59,6 +61,7 @@ export default function Home() {
           {activeTab === 'orchestration' && <OrchestrationPanel />}
           {activeTab === 'rules' && <FrequencyPanel />}
           {activeTab === 'smartbundle' && <SmartBundlePanel />}
+          {activeTab === 'bundledoc' && <SmartBundleDocPanel />}
         </div>
       </div>
     </div>

@@ -584,7 +584,7 @@ export default function SmartBundlePanel() {
             { id: 'R2-FAIR', name: 'Fairness quota', desc: 'Mỗi squad tối thiểu 2 lần/tuần. Chưa đạt → boost +20', color: '#2563eb', icon: '⚖️' },
             { id: 'R3-FREQ', name: 'Frequency cap', desc: '1 bundle/ngày. Skip nếu KH vừa giao dịch 4h', color: '#059669', icon: '🕐' },
             { id: 'R4-DEDUP', name: 'Dedup 7 ngày', desc: 'Cùng offer không hiện quá 2 lần/7 ngày cho 1 KH', color: '#d97706', icon: '🔄' },
-            { id: 'R5-COOL', name: 'Post-action', desc: 'Vừa mua Bond → ẩn Bond offers 14 ngày', color: '#ef4444', icon: '❄️' },
+            { id: 'R5-COOL', name: 'Dismiss cooldown', desc: 'Dismiss offer → cooldown SP đó 7 ngày. Mua thành công → vẫn tiếp tục upsell', color: '#ef4444', icon: '❄️' },
           ].map(r => (
             <div key={r.id} className="bg-slate-50 rounded-xl p-3 border border-slate-200" style={{ borderTopWidth: 3, borderTopColor: r.color }}>
               <div className="text-sm mb-1">{r.icon}</div>
