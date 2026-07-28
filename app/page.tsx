@@ -1,19 +1,21 @@
 'use client'
 import { useState } from 'react'
 import InboxUXPanel from '@/components/InboxUXPanel'
-import SimulatorPanel from '@/components/SimulatorPanel'
 import SmartBundlePanel from '@/components/SmartBundlePanel'
 import SmartBundleDocPanel from '@/components/SmartBundleDocPanel'
+import HybridBundlePanel from '@/components/HybridBundlePanel'
+import AutoSchedulerPanel from '@/components/AutoSchedulerPanel'
 
 const subTabs = [
-  { id: 'simulator' as const, label: '🧪 Notification Simulator', desc: 'Giả lập 7 ngày gửi noti' },
+  { id: 'smartbundle' as const, label: '🚀 Option 1: Smart Bundle', desc: 'Personalized top 3 offers' },
+  { id: 'hybrid' as const, label: '🎯 Option 2: Main + Cross-sell', desc: 'Coverage 100% + personalized' },
+  { id: 'scheduler' as const, label: '📅 Option 3: Auto-scheduler', desc: 'Tự xếp lịch campaign' },
+  { id: 'bundledoc' as const, label: '📖 Tài liệu chi tiết', desc: 'Scoring, Dismiss, Rules, Alibaba' },
   { id: 'inbox' as const, label: '📱 Inbox UX Redesign', desc: 'Giao diện inbox mới cho KH' },
-  { id: 'smartbundle' as const, label: '🚀 Smart Bundle Engine', desc: 'Mô hình Alipay — Multi-signal' },
-  { id: 'bundledoc' as const, label: '📖 Bundle — Chi tiết', desc: 'Scoring, Dismiss, Rules, Alibaba' },
 ]
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'simulator' | 'inbox' | 'smartbundle' | 'bundledoc'>('simulator')
+  const [activeTab, setActiveTab] = useState<'smartbundle' | 'hybrid' | 'scheduler' | 'bundledoc' | 'inbox'>('smartbundle')
 
   return (
     <div className="min-h-screen" style={{ background: '#f8fafc' }}>
@@ -23,8 +25,8 @@ export default function Home() {
           <div className="flex items-center gap-3 mb-1">
             <span style={{ width: 36, height: 36, background: 'linear-gradient(135deg, #534AB7, #7F77DD)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 800 }}>TCBS</span>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">TCinvest Notification — Redesign Demo</h1>
-              <p className="text-xs text-slate-400 mt-0.5">Brainstorm & Demo · Inbox UX + Smart Bundle Engine</p>
+              <h1 className="text-xl font-bold tracking-tight">TCinvest — Campaign Orchestration Demo</h1>
+              <p className="text-xs text-slate-400 mt-0.5">3 Options điều phối campaign · Smart Bundle · Main + Cross-sell · Auto-scheduler</p>
             </div>
           </div>
         </div>
@@ -52,10 +54,11 @@ export default function Home() {
 
         {/* Tab content */}
         <div className="animate-fade-in">
-          {activeTab === 'simulator' && <SimulatorPanel />}
-          {activeTab === 'inbox' && <InboxUXPanel />}
           {activeTab === 'smartbundle' && <SmartBundlePanel />}
+          {activeTab === 'hybrid' && <HybridBundlePanel />}
+          {activeTab === 'scheduler' && <AutoSchedulerPanel />}
           {activeTab === 'bundledoc' && <SmartBundleDocPanel />}
+          {activeTab === 'inbox' && <InboxUXPanel />}
         </div>
       </div>
     </div>
