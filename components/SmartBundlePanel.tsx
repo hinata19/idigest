@@ -146,12 +146,195 @@ export default function SmartBundlePanel() {
       </div>
 
       {/* KPI overview */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <KpiCard label="Loại sản phẩm" value="7" sub="C(7,3) = 35 bundles" subColor="neutral" />
         <KpiCard label="Customer segments" value="6" sub="Batch 1 lần/tuần" subColor="neutral" />
-        <KpiCard label="DAU login" value="100K" sub="A/B test xong 2-3 ngày" subColor="success" />
-        <KpiCard label="KH đã giao dịch" value="500K" sub="Data cho cross-sell" subColor="success" />
         <KpiCard label="Squad exposure" value="3x" sub="1 ngày/tuần → 3 ngày" subColor="success" />
+      </div>
+
+      {/* Bundle UI Mockup */}
+      <div className="panel mb-6">
+        <h3 className="text-base font-bold mb-1">📱 Giao diện Bundle — Ưu đãi cá nhân</h3>
+        <p className="text-[10px] text-slate-400 mb-4">Mỗi KH nhận 1 notification chứa 3 ưu đãi phù hợp nhất. Chọn KH để xem bundle thay đổi.</p>
+
+        {/* Customer switcher */}
+        <div className="flex gap-2 mb-5">
+          {customerProfiles.map((c, i) => (
+            <button
+              key={c.id}
+              onClick={() => setSelectedCustomer(i)}
+              className={`px-3 py-2 rounded-lg text-xs font-medium transition-all border ${
+                selectedCustomer === i
+                  ? 'bg-violet-50 border-violet-200 text-violet-700 shadow-sm'
+                  : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300'
+              }`}
+            >
+              {c.name}
+              <div className="text-[9px] mt-0.5 font-normal opacity-70">{segments.find(s => s.id === c.segment)?.name}</div>
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          {/* Phone mockup */}
+          <div className="flex justify-center">
+            <div style={{
+              width: 340, border: '3px solid #1e293b', borderRadius: 32, overflow: 'hidden',
+              background: '#fff', boxShadow: '0 8px 40px rgba(0,0,0,0.12)',
+            }}>
+              {/* Status bar */}
+              <div style={{ background: '#1e293b', padding: '6px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 10, color: '#fff', fontWeight: 600 }}>09:00</span>
+                <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                  <div style={{ width: 12, height: 7, border: '1px solid #fff', borderRadius: 2, position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: 1, left: 1, right: 2, bottom: 1, background: '#4ade80', borderRadius: 1 }} />
+                  </div>
+                </div>
+              </div>
+              {/* App header */}
+              <div style={{ background: 'linear-gradient(135deg, #534AB7, #7F77DD)', padding: '16px 18px 14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>TCinvest</div>
+                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>Thông báo</div>
+                  </div>
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>🔔</div>
+                </div>
+              </div>
+              {/* Notification tabs */}
+              <div style={{ display: 'flex', borderBottom: '1px solid #f1f5f9', background: '#fafafa' }}>
+                <div style={{ flex: 1, padding: '10px 0', textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#7c3aed', borderBottom: '2px solid #7c3aed' }}>Ưu đãi cho bạn</div>
+                <div style={{ flex: 1, padding: '10px 0', textAlign: 'center', fontSize: 11, color: '#94a3b8' }}>Hệ thống</div>
+                <div style={{ flex: 1, padding: '10px 0', textAlign: 'center', fontSize: 11, color: '#94a3b8' }}>Giao dịch</div>
+              </div>
+              {/* Bundle card */}
+              <div style={{ padding: '14px' }}>
+                <div style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', borderRadius: 16, overflow: 'hidden', border: '1px solid #ddd6fe' }}>
+                  {/* Bundle header */}
+                  <div style={{ padding: '12px 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b' }}>🎯 3 ưu đãi dành riêng cho bạn</div>
+                      <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2 }}>Hôm nay · Dựa trên danh mục của bạn</div>
+                    </div>
+                    <span style={{ fontSize: 8, background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>MỚI</span>
+                  </div>
+                  {/* 3 offers */}
+                  {topBundle.map((squad, i) => {
+                    const meta = squadMeta[squad]
+                    const offer = todayOffers[squad]
+                    return (
+                      <div key={squad} style={{
+                        display: 'flex', gap: 10, padding: '10px 14px', alignItems: 'center',
+                        background: i === 0 ? 'rgba(255,255,255,0.7)' : 'transparent',
+                        borderTop: '1px solid rgba(0,0,0,0.04)',
+                      }}>
+                        <div style={{
+                          width: 38, height: 38, borderRadius: 10, background: meta.bg,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, flexShrink: 0,
+                          border: `1px solid ${meta.color}20`,
+                        }}>{meta.icon}</div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <span style={{ fontSize: 12, fontWeight: 600, color: '#1e293b' }}>{offer.name}</span>
+                            {i === 0 && <span style={{ fontSize: 7, background: '#fef3c7', color: '#b45309', padding: '1px 4px', borderRadius: 3, fontWeight: 700 }}>HOT</span>}
+                          </div>
+                          <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>{offer.urgency}</div>
+                        </div>
+                        <div style={{
+                          width: 28, height: 28, borderRadius: 7, background: `${meta.color}15`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: meta.color, fontWeight: 700,
+                        }}>→</div>
+                      </div>
+                    )
+                  })}
+                  {/* CTA */}
+                  <div style={{ padding: '10px 14px 14px', textAlign: 'center' }}>
+                    <div style={{
+                      background: 'linear-gradient(135deg, #534AB7, #7F77DD)', color: '#fff',
+                      padding: '9px 0', borderRadius: 10, fontSize: 12, fontWeight: 600,
+                      cursor: 'pointer',
+                    }}>Xem tất cả ưu đãi</div>
+                  </div>
+                </div>
+
+                {/* Older notification */}
+                <div style={{ marginTop: 12, padding: '12px 14px', background: '#f8fafc', borderRadius: 12, border: '1px solid #f1f5f9', opacity: 0.6 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 8, background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>📊</div>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b' }}>Ưu đãi hôm qua</div>
+                      <div style={{ fontSize: 9, color: '#94a3b8' }}>Đã xem · Hôm qua 09:00</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Bottom nav */}
+              <div style={{ display: 'flex', borderTop: '1px solid #f1f5f9', background: '#fff', padding: '8px 0 12px' }}>
+                {[
+                  { icon: '🏠', label: 'Tổng quan' },
+                  { icon: '📈', label: 'Thị trường' },
+                  { icon: '💼', label: 'Tài sản' },
+                  { icon: '🔔', label: 'Thông báo', active: true },
+                  { icon: '👤', label: 'Tài khoản' },
+                ].map(nav => (
+                  <div key={nav.label} style={{ flex: 1, textAlign: 'center' }}>
+                    <div style={{ fontSize: 16 }}>{nav.icon}</div>
+                    <div style={{ fontSize: 8, marginTop: 2, color: nav.active ? '#7c3aed' : '#94a3b8', fontWeight: nav.active ? 600 : 400 }}>{nav.label}</div>
+                    {nav.active && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#ef4444', margin: '-12px auto 0', position: 'relative', top: -10, left: 8 }} />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Info panel bên phải */}
+          <div>
+            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 mb-3">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm font-bold">{customer.name}</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: segments.find(s => s.id === customer.segment)?.color + '18', color: segments.find(s => s.id === customer.segment)?.color }}>
+                  {segments.find(s => s.id === customer.segment)?.name}
+                </span>
+              </div>
+              <div className="text-xs text-slate-500 mb-3">{customer.details}</div>
+            </div>
+
+            {/* Why these 3 */}
+            <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-3">
+              <div className="text-xs font-bold text-violet-700 mb-2">Tại sao bundle này?</div>
+              {topBundle.map((squad, i) => (
+                <div key={squad} className="flex items-start gap-2 text-[11px] text-violet-700 mb-1.5">
+                  <span className="flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center text-[9px] font-bold" style={{
+                    background: i === 0 ? '#d97706' : i === 1 ? '#64748b' : '#a8a29e', color: '#fff'
+                  }}>{i + 1}</span>
+                  <div>
+                    <SquadBadge squad={squad} size="xs" /> — score <b>{customer.scores[squad].total}</b>
+                    {customer.scores[squad].txn > 0 && <span className="text-emerald-600"> (GD +{customer.scores[squad].txn})</span>}
+                    {customer.scores[squad].portfolio > 0 && <span className="text-blue-600"> (Port +{customer.scores[squad].portfolio})</span>}
+                    {customer.scores[squad].app > 0 && <span className="text-amber-600"> (App +{customer.scores[squad].app})</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Attribution tracking */}
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-3">
+              <div className="text-xs font-bold text-emerald-700 mb-2">Attribution tracking</div>
+              <div className="text-[11px] text-emerald-700 leading-relaxed">
+                Mỗi offer trong bundle có <b>tracking link riêng</b>. Khi KH click vào offer nào → ghi nhận cho squad đó.<br />
+                → Squad biết rõ <b>bao nhiêu KH click offer của mình</b> mỗi ngày.
+              </div>
+            </div>
+
+            {/* Bundle rotation */}
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <div className="text-xs font-bold text-amber-700 mb-2">Bundle thay đổi mỗi ngày</div>
+              <div className="text-[11px] text-amber-700 leading-relaxed">
+                Scoring chạy lại <b>mỗi ngày lúc 17:00</b>. Nếu KH click offer Bond hôm nay → ngày mai Bond score tăng → có thể vẫn xuất hiện. Nếu KH dismiss → score giảm → thay bằng SP khác.
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Cross-sell matrix + Segments */}
