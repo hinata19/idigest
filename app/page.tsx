@@ -1,8 +1,6 @@
 'use client'
 import { useState } from 'react'
 import InboxUXPanel from '@/components/InboxUXPanel'
-import OrchestrationPanel from '@/components/OrchestrationPanel'
-import FrequencyPanel from '@/components/FrequencyPanel'
 import SimulatorPanel from '@/components/SimulatorPanel'
 import SmartBundlePanel from '@/components/SmartBundlePanel'
 import SmartBundleDocPanel from '@/components/SmartBundleDocPanel'
@@ -10,14 +8,12 @@ import SmartBundleDocPanel from '@/components/SmartBundleDocPanel'
 const subTabs = [
   { id: 'simulator' as const, label: '🧪 Notification Simulator', desc: 'Giả lập 7 ngày gửi noti' },
   { id: 'inbox' as const, label: '📱 Inbox UX Redesign', desc: 'Giao diện inbox mới cho KH' },
-  { id: 'orchestration' as const, label: '🔄 Campaign Orchestration', desc: 'Quy trình gửi campaign' },
-  { id: 'rules' as const, label: '🛡️ Frequency & Rules', desc: 'Quản lý tần suất gửi' },
   { id: 'smartbundle' as const, label: '🚀 Smart Bundle Engine', desc: 'Mô hình Alipay — Multi-signal' },
   { id: 'bundledoc' as const, label: '📖 Bundle — Chi tiết', desc: 'Scoring, Dismiss, Rules, Alibaba' },
 ]
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'simulator' | 'inbox' | 'orchestration' | 'rules' | 'smartbundle' | 'bundledoc'>('simulator')
+  const [activeTab, setActiveTab] = useState<'simulator' | 'inbox' | 'smartbundle' | 'bundledoc'>('simulator')
 
   return (
     <div className="min-h-screen" style={{ background: '#f8fafc' }}>
@@ -28,7 +24,7 @@ export default function Home() {
             <span style={{ width: 36, height: 36, background: 'linear-gradient(135deg, #534AB7, #7F77DD)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 800 }}>TCBS</span>
             <div>
               <h1 className="text-xl font-bold tracking-tight">TCinvest Notification — Redesign Demo</h1>
-              <p className="text-xs text-slate-400 mt-0.5">Brainstorm & Demo · Inbox UX + Campaign Orchestration + Frequency Rules</p>
+              <p className="text-xs text-slate-400 mt-0.5">Brainstorm & Demo · Inbox UX + Smart Bundle Engine</p>
             </div>
           </div>
         </div>
@@ -58,8 +54,6 @@ export default function Home() {
         <div className="animate-fade-in">
           {activeTab === 'simulator' && <SimulatorPanel />}
           {activeTab === 'inbox' && <InboxUXPanel />}
-          {activeTab === 'orchestration' && <OrchestrationPanel />}
-          {activeTab === 'rules' && <FrequencyPanel />}
           {activeTab === 'smartbundle' && <SmartBundlePanel />}
           {activeTab === 'bundledoc' && <SmartBundleDocPanel />}
         </div>

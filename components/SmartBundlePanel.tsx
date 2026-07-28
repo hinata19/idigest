@@ -57,16 +57,16 @@ interface CustomerProfile {
 
 const customerProfiles: CustomerProfile[] = [
   {
-    id: 'C1', name: 'Nguyễn Minh', segment: 'trader',
-    details: 'Trade 15 lần/tháng · Portfolio 80% Stock · Xem bảng giá 4h/ngày',
+    id: 'C1', name: 'Nguyễn Minh', segment: 'balanced',
+    details: 'Portfolio đa dạng: 35% Stock, 30% Bond, 20% Fund · Trade 5 lần/tháng',
     scores: {
-      bond:       { txn: 5,  portfolio: 0,  app: 5,  click: 6,  dismiss: 0, total: 31 },
-      fund:       { txn: 0,  portfolio: 0,  app: 2,  click: 2,  dismiss: 0, total: 18 },
-      stock:      { txn: 35, portfolio: 25, app: 20, click: 12, dismiss: 0, total: 92 },
-      borrowlink: { txn: 0,  portfolio: 0,  app: 0,  click: 0,  dismiss: -4, total: 4 },
-      itracker:   { txn: 20, portfolio: 20, app: 16, click: 12, dismiss: 0, total: 68 },
-      ipower:     { txn: 0,  portfolio: 5,  app: 1,  click: 0,  dismiss: -6, total: 8 },
-      ioptima:    { txn: 10, portfolio: 8,  app: 12, click: 8,  dismiss: 0, total: 52 },
+      bond:       { txn: 20, portfolio: 18, app: 14, click: 10, dismiss: 0, total: 75 },
+      fund:       { txn: 15, portfolio: 12, app: 16, click: 8,  dismiss: 0, total: 62 },
+      stock:      { txn: 30, portfolio: 22, app: 16, click: 12, dismiss: 0, total: 88 },
+      borrowlink: { txn: 0,  portfolio: 0,  app: 2,  click: 0,  dismiss: -2, total: 8 },
+      itracker:   { txn: 5,  portfolio: 5,  app: 8,  click: 4,  dismiss: 0, total: 30 },
+      ipower:     { txn: 0,  portfolio: 5,  app: 3,  click: 0,  dismiss: 0, total: 15 },
+      ioptima:    { txn: 5,  portfolio: 4,  app: 6,  click: 4,  dismiss: 0, total: 28 },
     },
   },
   {
