@@ -2,9 +2,22 @@ export type NotiCategory = 'transaction' | 'promo' | 'system' | 'personal'
 export type NotiChannel = 'push' | 'inbox' | 'email' | 'sms'
 export type CampaignStatus = 'draft' | 'pending' | 'approved' | 'queued' | 'sending' | 'completed' | 'paused'
 
+export type ProductTag = 'Stock' | 'Bond' | 'Fund' | 'iPower' | 'iOptima' | 'BorrowLink' | 'iTracker' | 'iLucky'
+export type SystemTag = 'Bảo mật' | 'App' | 'Chính sách'
+export type PersonalTag = 'NVTV' | 'Sự kiện'
+export type SubCategory = ProductTag | SystemTag | PersonalTag
+
+export const subCategoryMap: Record<NotiCategory, SubCategory[]> = {
+  transaction: ['Stock', 'Bond', 'Fund', 'iPower', 'iOptima', 'BorrowLink'],
+  promo: ['Bond', 'Fund', 'Stock', 'iLucky', 'iPower', 'iOptima', 'BorrowLink', 'iTracker'],
+  system: ['Bảo mật', 'App', 'Chính sách'],
+  personal: ['NVTV', 'Sự kiện'],
+}
+
 export interface Notification {
   id: string
   category: NotiCategory
+  subCategory?: SubCategory
   title: string
   desc: string
   time: string
@@ -45,18 +58,18 @@ export interface UserNotiProfile {
 }
 
 export const notifications: Notification[] = [
-  { id: 'n1', category: 'transaction', title: 'Lệnh khớp: MWG x500', desc: 'Giá khớp 52,300. Tổng GT: 26,150,000đ', time: '2 phút trước', unread: true, icon: '↔', iconBg: '#fee2e2', cta: 'Xem chi tiết lệnh' },
+  { id: 'n1', category: 'transaction', subCategory: 'Stock', title: 'Lệnh khớp: MWG x500', desc: 'Giá khớp 52,300. Tổng GT: 26,150,000đ', time: '2 phút trước', unread: true, icon: '↔', iconBg: '#fee2e2', cta: 'Xem chi tiết lệnh' },
   { id: 'n2', category: 'transaction', title: 'Nạp tiền thành công', desc: '+50,000,000đ vào TK chứng khoán', time: '1 giờ trước', unread: true, icon: '₫', iconBg: '#fee2e2' },
-  { id: 'n3', category: 'promo', title: '3 ưu đãi đang chờ bạn', desc: 'Bond 9.5%, Fund KM 0% phí, iLucky x2 điểm', time: '3 giờ trước', unread: true, grouped: true, groupCount: 3, icon: '🎁', iconBg: '#ede9fe', cta: 'Xem tất cả ưu đãi' },
-  { id: 'n4', category: 'system', title: 'Cập nhật bảo mật', desc: 'Vui lòng bật xác thực 2 lớp để bảo vệ TK', time: '5 giờ trước', unread: false, icon: '🛡', iconBg: '#dbeafe', cta: 'Bật ngay' },
-  { id: 'n5', category: 'personal', title: 'NVTV Nguyễn Văn A nhắn bạn', desc: 'Anh/chị ơi, em có thông tin về TCBond mới...', time: '6 giờ trước', unread: true, icon: '💬', iconBg: '#d1fae5', cta: 'Trả lời' },
-  { id: 'n6', category: 'promo', title: 'TCBond 9.5% — còn 3 ngày', desc: 'Lãi suất hấp dẫn, kỳ hạn 12 tháng. Đầu tư từ 10 triệu.', time: 'Hôm qua', unread: false, icon: '📊', iconBg: '#ede9fe', cta: 'Mua ngay' },
-  { id: 'n7', category: 'transaction', title: '5 lệnh khớp hôm qua', desc: 'HPG +200, VNM -100, FPT +300, TCB +500, VIC -200', time: 'Hôm qua', unread: false, grouped: true, groupCount: 5, icon: '📋', iconBg: '#fee2e2', cta: 'Xem sổ lệnh' },
-  { id: 'n8', category: 'system', title: 'Bảo trì hệ thống 01/07', desc: 'Từ 23h-1h. Không ảnh hưởng giao dịch trong phiên', time: '2 ngày trước', unread: false, icon: '🔧', iconBg: '#dbeafe' },
-  { id: 'n9', category: 'promo', title: 'iLucky — Quay số trúng thưởng', desc: 'Bạn có 3 lượt quay miễn phí tuần này', time: '3 ngày trước', unread: false, icon: '🎰', iconBg: '#ede9fe', cta: 'Quay ngay' },
-  { id: 'n10', category: 'personal', title: 'Mời tham gia Investor Day', desc: 'Sự kiện offline tại HCM ngày 15/07 — dành cho KH VIP', time: '4 ngày trước', unread: false, icon: '🎫', iconBg: '#d1fae5', cta: 'Đăng ký' },
-  { id: 'n11', category: 'transaction', title: 'Cổ tức HPG đã về TK', desc: '+2,500,000đ cổ tức bằng tiền mặt', time: '5 ngày trước', unread: false, icon: '💰', iconBg: '#fee2e2' },
-  { id: 'n12', category: 'system', title: 'Phiên bản app mới v4.2', desc: 'Cập nhật giao diện, thêm tính năng Dark mode', time: '1 tuần trước', unread: false, icon: '📱', iconBg: '#dbeafe', cta: 'Cập nhật' },
+  { id: 'n3', category: 'promo', subCategory: 'Bond', title: '3 ưu đãi đang chờ bạn', desc: 'Bond 9.5%, Fund KM 0% phí, iLucky x2 điểm', time: '3 giờ trước', unread: true, grouped: true, groupCount: 3, icon: '🎁', iconBg: '#ede9fe', cta: 'Xem tất cả ưu đãi' },
+  { id: 'n4', category: 'system', subCategory: 'Bảo mật', title: 'Cập nhật bảo mật', desc: 'Vui lòng bật xác thực 2 lớp để bảo vệ TK', time: '5 giờ trước', unread: false, icon: '🛡', iconBg: '#dbeafe', cta: 'Bật ngay' },
+  { id: 'n5', category: 'personal', subCategory: 'NVTV', title: 'NVTV Nguyễn Văn A nhắn bạn', desc: 'Anh/chị ơi, em có thông tin về TCBond mới...', time: '6 giờ trước', unread: true, icon: '💬', iconBg: '#d1fae5', cta: 'Trả lời' },
+  { id: 'n6', category: 'promo', subCategory: 'Bond', title: 'TCBond 9.5% — còn 3 ngày', desc: 'Lãi suất hấp dẫn, kỳ hạn 12 tháng. Đầu tư từ 10 triệu.', time: 'Hôm qua', unread: false, icon: '📊', iconBg: '#ede9fe', cta: 'Mua ngay' },
+  { id: 'n7', category: 'transaction', subCategory: 'Stock', title: '5 lệnh khớp hôm qua', desc: 'HPG +200, VNM -100, FPT +300, TCB +500, VIC -200', time: 'Hôm qua', unread: false, grouped: true, groupCount: 5, icon: '📋', iconBg: '#fee2e2', cta: 'Xem sổ lệnh' },
+  { id: 'n8', category: 'system', subCategory: 'App', title: 'Bảo trì hệ thống 01/07', desc: 'Từ 23h-1h. Không ảnh hưởng giao dịch trong phiên', time: '2 ngày trước', unread: false, icon: '🔧', iconBg: '#dbeafe' },
+  { id: 'n9', category: 'promo', subCategory: 'iLucky', title: 'iLucky — Quay số trúng thưởng', desc: 'Bạn có 3 lượt quay miễn phí tuần này', time: '3 ngày trước', unread: false, icon: '🎰', iconBg: '#ede9fe', cta: 'Quay ngay' },
+  { id: 'n10', category: 'personal', subCategory: 'Sự kiện', title: 'Mời tham gia Investor Day', desc: 'Sự kiện offline tại HCM ngày 15/07 — dành cho KH VIP', time: '4 ngày trước', unread: false, icon: '🎫', iconBg: '#d1fae5', cta: 'Đăng ký' },
+  { id: 'n11', category: 'transaction', subCategory: 'Stock', title: 'Cổ tức HPG đã về TK', desc: '+2,500,000đ cổ tức bằng tiền mặt', time: '5 ngày trước', unread: false, icon: '💰', iconBg: '#fee2e2' },
+  { id: 'n12', category: 'system', subCategory: 'App', title: 'Phiên bản app mới v4.2', desc: 'Cập nhật giao diện, thêm tính năng Dark mode', time: '1 tuần trước', unread: false, icon: '📱', iconBg: '#dbeafe', cta: 'Cập nhật' },
 ]
 
 export const campaignQueue: CampaignRequest[] = [

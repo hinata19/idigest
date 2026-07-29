@@ -7,15 +7,15 @@ import HybridBundlePanel from '@/components/HybridBundlePanel'
 import AutoSchedulerPanel from '@/components/AutoSchedulerPanel'
 
 const subTabs = [
+  { id: 'inbox' as const, label: '📱 Inbox UX Redesign', desc: 'Giao diện inbox mới cho KH' },
   { id: 'smartbundle' as const, label: '🚀 Option 1: Smart Bundle', desc: 'Personalized top 3 offers' },
   { id: 'hybrid' as const, label: '🎯 Option 2: Main + Cross-sell', desc: 'Coverage 100% + personalized' },
   { id: 'scheduler' as const, label: '📅 Option 3: Auto-scheduler', desc: 'Tự xếp lịch campaign' },
   { id: 'bundledoc' as const, label: '📖 Tài liệu chi tiết', desc: 'Scoring, Dismiss, Rules, Alibaba' },
-  { id: 'inbox' as const, label: '📱 Inbox UX Redesign', desc: 'Giao diện inbox mới cho KH' },
 ]
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'smartbundle' | 'hybrid' | 'scheduler' | 'bundledoc' | 'inbox'>('smartbundle')
+  const [activeTab, setActiveTab] = useState<'inbox' | 'smartbundle' | 'hybrid' | 'scheduler' | 'bundledoc'>('inbox')
 
   return (
     <div className="min-h-screen" style={{ background: '#f8fafc' }}>
