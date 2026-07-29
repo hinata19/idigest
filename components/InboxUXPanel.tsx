@@ -10,161 +10,15 @@ const categoryMeta: Record<NotiCategory, { label: string; color: string; bg: str
   personal: { label: 'Cá nhân', color: '#059669', bg: '#d1fae5' },
 }
 
-type Lang = 'vi' | 'en' | 'zh' | 'ja' | 'ko'
-const langOptions: { key: Lang; flag: string; label: string }[] = [
-  { key: 'vi', flag: '🇻🇳', label: 'VN' },
-  { key: 'en', flag: '🇺🇸', label: 'EN' },
-  { key: 'zh', flag: '🇨🇳', label: 'CN' },
-  { key: 'ja', flag: '🇯🇵', label: 'JP' },
-  { key: 'ko', flag: '🇰🇷', label: 'KR' },
+const aiSummaryLines = [
+  { type: 'highlight' as const, icon: '📊', text: '2 lệnh khớp hôm nay — MWG +500, tổng GT 26.1tr. Cổ tức HPG 2.5tr đã về TK.' },
+  { type: 'action' as const, icon: '⚠️', text: 'Cần bật xác thực 2 lớp — bảo mật tài khoản đang ở mức thấp.' },
+  { type: 'promo' as const, icon: '🎯', text: '3 ưu đãi phù hợp profile: Bond 9.5% (kỳ hạn yêu thích), Fund KM 0% phí, iLucky 3 lượt quay.' },
+  { type: 'personal' as const, icon: '💬', text: 'NVTV Nguyễn Văn A nhắn về TCBond mới — nên trả lời trong hôm nay.' },
+  { type: 'insight' as const, icon: '💡', text: 'Tuần này bạn nhận 8 noti, ít hơn 40% so với tuần trước. Open rate của bạn: 72%.' },
 ]
 
-const aiSummaryI18n: Record<Lang, { type: string; icon: string; text: string }[]> = {
-  vi: [
-    { type: 'highlight', icon: '📊', text: '2 lệnh khớp hôm nay — MWG +500, tổng GT 26.1tr. Cổ tức HPG 2.5tr đã về TK.' },
-    { type: 'action', icon: '⚠️', text: 'Cần bật xác thực 2 lớp — bảo mật tài khoản đang ở mức thấp.' },
-    { type: 'promo', icon: '🎯', text: '3 ưu đãi phù hợp profile: Bond 9.5% (kỳ hạn yêu thích), Fund KM 0% phí, iLucky 3 lượt quay.' },
-    { type: 'personal', icon: '💬', text: 'NVTV Nguyễn Văn A nhắn về TCBond mới — nên trả lời trong hôm nay.' },
-    { type: 'insight', icon: '💡', text: 'Tuần này bạn nhận 8 noti, ít hơn 40% so với tuần trước. Open rate của bạn: 72%.' },
-  ],
-  en: [
-    { type: 'highlight', icon: '📊', text: '2 orders matched today — MWG +500, total value 26.1M VND. HPG dividend 2.5M credited.' },
-    { type: 'action', icon: '⚠️', text: 'Please enable 2-factor authentication — your account security level is low.' },
-    { type: 'promo', icon: '🎯', text: '3 offers matching your profile: Bond 9.5% (preferred tenor), Fund 0% fee promo, iLucky 3 free spins.' },
-    { type: 'personal', icon: '💬', text: 'Advisor Nguyen Van A messaged about new TCBond — reply recommended today.' },
-    { type: 'insight', icon: '💡', text: 'This week you received 8 notifications, 40% less than last week. Your open rate: 72%.' },
-  ],
-  zh: [
-    { type: 'highlight', icon: '📊', text: '今日2笔订单成交 — MWG +500，总价值2610万越盾。HPG股息250万已入账。' },
-    { type: 'action', icon: '⚠️', text: '请开启双重认证 — 您的账户安全等级较低。' },
-    { type: 'promo', icon: '🎯', text: '3个匹配您的优惠：债券9.5%（偏好期限），基金0%费用，iLucky 3次免费抽奖。' },
-    { type: 'personal', icon: '💬', text: '顾问Nguyen Van A发来关于新TCBond的消息 — 建议今日回复。' },
-    { type: 'insight', icon: '💡', text: '本周您收到8条通知，比上周减少40%。您的打开率：72%。' },
-  ],
-  ja: [
-    { type: 'highlight', icon: '📊', text: '本日2件の注文が約定 — MWG +500、総額2,610万VND。HPG配当250万が入金済み。' },
-    { type: 'action', icon: '⚠️', text: '二段階認証を有効にしてください — アカウントのセキュリティレベルが低いです。' },
-    { type: 'promo', icon: '🎯', text: 'プロフィールに合う3つの特典：債券9.5%、ファンド手数料0%、iLucky無料3回。' },
-    { type: 'personal', icon: '💬', text: 'アドバイザーNguyen Van AがTCBondについてメッセージ — 本日中の返信を推奨。' },
-    { type: 'insight', icon: '💡', text: '今週の通知は8件、先週より40%減少。開封率：72%。' },
-  ],
-  ko: [
-    { type: 'highlight', icon: '📊', text: '오늘 2건 체결 — MWG +500, 총 가치 2,610만 VND. HPG 배당금 250만 입금 완료.' },
-    { type: 'action', icon: '⚠️', text: '2단계 인증을 활성화하세요 — 계정 보안 수준이 낮습니다.' },
-    { type: 'promo', icon: '🎯', text: '프로필 맞춤 3가지 혜택: 채권 9.5%, 펀드 수수료 0%, iLucky 무료 3회.' },
-    { type: 'personal', icon: '💬', text: '어드바이저 Nguyen Van A가 새 TCBond에 대해 메시지 — 오늘 답장 권장.' },
-    { type: 'insight', icon: '💡', text: '이번 주 알림 8건, 지난주보다 40% 감소. 오픈율: 72%.' },
-  ],
-}
-
-const notiI18n: Record<string, Record<Lang, { title: string; desc: string; cta?: string }>> = {
-  n1: {
-    vi: { title: 'Lệnh khớp: MWG x500', desc: 'Giá khớp 52,300. Tổng GT: 26,150,000đ', cta: 'Xem chi tiết lệnh' },
-    en: { title: 'Order matched: MWG x500', desc: 'Matched at 52,300. Total: 26,150,000 VND', cta: 'View order details' },
-    zh: { title: '订单成交：MWG x500', desc: '成交价 52,300。总额：26,150,000越盾', cta: '查看订单详情' },
-    ja: { title: '注文約定：MWG x500', desc: '約定価格 52,300。合計：26,150,000 VND', cta: '注文詳細を見る' },
-    ko: { title: '주문 체결: MWG x500', desc: '체결가 52,300. 총액: 26,150,000 VND', cta: '주문 상세 보기' },
-  },
-  n2: {
-    vi: { title: 'Nạp tiền thành công', desc: '+50,000,000đ vào TK chứng khoán' },
-    en: { title: 'Deposit successful', desc: '+50,000,000 VND to securities account' },
-    zh: { title: '充值成功', desc: '+50,000,000越盾 至证券账户' },
-    ja: { title: '入金完了', desc: '+50,000,000 VND 証券口座へ' },
-    ko: { title: '입금 완료', desc: '+50,000,000 VND 증권 계좌로' },
-  },
-  n3: {
-    vi: { title: '3 ưu đãi đang chờ bạn', desc: 'Bond 9.5%, Fund KM 0% phí, iLucky x2 điểm', cta: 'Xem tất cả ưu đãi' },
-    en: { title: '3 offers waiting for you', desc: 'Bond 9.5%, Fund 0% fee promo, iLucky x2 points', cta: 'View all offers' },
-    zh: { title: '3个优惠等待您', desc: '债券9.5%，基金0%费用，iLucky双倍积分', cta: '查看全部优惠' },
-    ja: { title: '3つの特典があなたを待っています', desc: '債券9.5%、ファンド手数料0%、iLucky 2倍ポイント', cta: '特典一覧を見る' },
-    ko: { title: '3가지 혜택이 기다리고 있습니다', desc: '채권 9.5%, 펀드 수수료 0%, iLucky 2배 포인트', cta: '모든 혜택 보기' },
-  },
-  n4: {
-    vi: { title: 'Cập nhật bảo mật', desc: 'Vui lòng bật xác thực 2 lớp để bảo vệ TK', cta: 'Bật ngay' },
-    en: { title: 'Security update', desc: 'Please enable 2-factor authentication to protect your account', cta: 'Enable now' },
-    zh: { title: '安全更新', desc: '请启用双重认证以保护您的账户', cta: '立即启用' },
-    ja: { title: 'セキュリティ更新', desc: '二段階認証を有効にしてアカウントを保護してください', cta: '今すぐ有効化' },
-    ko: { title: '보안 업데이트', desc: '계정 보호를 위해 2단계 인증을 활성화하세요', cta: '지금 활성화' },
-  },
-  n5: {
-    vi: { title: 'NVTV Nguyễn Văn A nhắn bạn', desc: 'Anh/chị ơi, em có thông tin về TCBond mới...', cta: 'Trả lời' },
-    en: { title: 'Advisor Nguyen Van A messaged you', desc: 'Hi, I have information about the new TCBond...', cta: 'Reply' },
-    zh: { title: '顾问Nguyen Van A给您发了消息', desc: '您好，我有关于新TCBond的信息...', cta: '回复' },
-    ja: { title: 'アドバイザー Nguyen Van A からメッセージ', desc: '新しいTCBondについての情報があります...', cta: '返信' },
-    ko: { title: '어드바이저 Nguyen Van A의 메시지', desc: '안녕하세요, 새 TCBond 정보가 있습니다...', cta: '답장' },
-  },
-  n6: {
-    vi: { title: 'TCBond 9.5% — còn 3 ngày', desc: 'Lãi suất hấp dẫn, kỳ hạn 12 tháng. Đầu tư từ 10 triệu.', cta: 'Mua ngay' },
-    en: { title: 'TCBond 9.5% — 3 days left', desc: 'Attractive interest rate, 12-month tenor. Invest from 10M VND.', cta: 'Buy now' },
-    zh: { title: 'TCBond 9.5% — 还剩3天', desc: '诱人利率，12个月期限。最低投资1000万越盾。', cta: '立即购买' },
-    ja: { title: 'TCBond 9.5% — 残り3日', desc: '魅力的な金利、12ヶ月満期。1,000万VNDから投資可能。', cta: '今すぐ購入' },
-    ko: { title: 'TCBond 9.5% — 3일 남음', desc: '매력적인 금리, 12개월 만기. 1,000만 VND부터 투자.', cta: '지금 구매' },
-  },
-  n7: {
-    vi: { title: '5 lệnh khớp hôm qua', desc: 'HPG +200, VNM -100, FPT +300, TCB +500, VIC -200', cta: 'Xem sổ lệnh' },
-    en: { title: '5 orders matched yesterday', desc: 'HPG +200, VNM -100, FPT +300, TCB +500, VIC -200', cta: 'View order book' },
-    zh: { title: '昨日5笔订单成交', desc: 'HPG +200, VNM -100, FPT +300, TCB +500, VIC -200', cta: '查看订单簿' },
-    ja: { title: '昨日5件の注文が約定', desc: 'HPG +200, VNM -100, FPT +300, TCB +500, VIC -200', cta: '注文帳を見る' },
-    ko: { title: '어제 5건 체결', desc: 'HPG +200, VNM -100, FPT +300, TCB +500, VIC -200', cta: '주문 내역 보기' },
-  },
-  n8: {
-    vi: { title: 'Bảo trì hệ thống 01/07', desc: 'Từ 23h-1h. Không ảnh hưởng giao dịch trong phiên' },
-    en: { title: 'System maintenance 01/07', desc: 'From 23h-1h. No impact on trading session' },
-    zh: { title: '系统维护 01/07', desc: '23点至1点。不影响交易时段' },
-    ja: { title: 'システムメンテナンス 01/07', desc: '23時〜1時。取引セッションへの影響なし' },
-    ko: { title: '시스템 점검 01/07', desc: '23시-1시. 거래 세션에 영향 없음' },
-  },
-  n9: {
-    vi: { title: 'iLucky — Quay số trúng thưởng', desc: 'Bạn có 3 lượt quay miễn phí tuần này', cta: 'Quay ngay' },
-    en: { title: 'iLucky — Lucky draw', desc: 'You have 3 free spins this week', cta: 'Spin now' },
-    zh: { title: 'iLucky — 幸运抽奖', desc: '本周您有3次免费抽奖机会', cta: '立即抽奖' },
-    ja: { title: 'iLucky — ラッキードロー', desc: '今週3回の無料スピンがあります', cta: '今すぐ回す' },
-    ko: { title: 'iLucky — 럭키 드로우', desc: '이번 주 무료 3회 스핀 가능', cta: '지금 돌리기' },
-  },
-  n10: {
-    vi: { title: 'Mời tham gia Investor Day', desc: 'Sự kiện offline tại HCM ngày 15/07 — dành cho KH VIP', cta: 'Đăng ký' },
-    en: { title: 'Join Investor Day', desc: 'Offline event in HCM on 15/07 — for VIP customers', cta: 'Register' },
-    zh: { title: '邀请参加投资者日', desc: '7月15日胡志明市线下活动 — VIP客户专属', cta: '立即报名' },
-    ja: { title: 'インベスターデーへのご招待', desc: '7/15 HCMオフラインイベント — VIPのお客様限定', cta: '登録する' },
-    ko: { title: '인베스터 데이 초대', desc: '7/15 호치민 오프라인 이벤트 — VIP 고객 전용', cta: '등록하기' },
-  },
-  n11: {
-    vi: { title: 'Cổ tức HPG đã về TK', desc: '+2,500,000đ cổ tức bằng tiền mặt' },
-    en: { title: 'HPG dividend credited', desc: '+2,500,000 VND cash dividend' },
-    zh: { title: 'HPG股息已入账', desc: '+2,500,000越盾 现金股息' },
-    ja: { title: 'HPG配当が入金されました', desc: '+2,500,000 VND 現金配当' },
-    ko: { title: 'HPG 배당금 입금', desc: '+2,500,000 VND 현금 배당' },
-  },
-  n12: {
-    vi: { title: 'Phiên bản app mới v4.2', desc: 'Cập nhật giao diện, thêm tính năng Dark mode', cta: 'Cập nhật' },
-    en: { title: 'New app version v4.2', desc: 'UI update, new Dark mode feature', cta: 'Update' },
-    zh: { title: '新版本 v4.2', desc: '界面更新，新增深色模式', cta: '立即更新' },
-    ja: { title: '新バージョン v4.2', desc: 'UI更新、ダークモード機能追加', cta: 'アップデート' },
-    ko: { title: '새 버전 v4.2', desc: 'UI 업데이트, 다크 모드 추가', cta: '업데이트' },
-  },
-}
-
-const headerI18n: Record<Lang, { title: string; readAll: string; allTab: string; summary: string; summaryHint: string; summaryExpanded: string }> = {
-  vi: { title: '🔔 Thông báo', readAll: 'Đọc tất cả', allTab: 'Tất cả', summary: 'Nhấn để xem tóm tắt thông minh', summaryExpanded: 'Phân tích thông báo hôm nay' },
-  en: { title: '🔔 Notifications', readAll: 'Read all', allTab: 'All', summary: 'Tap to see smart summary', summaryExpanded: 'Today\'s notification analysis' },
-  zh: { title: '🔔 通知', readAll: '全部已读', allTab: '全部', summary: '点击查看智能摘要', summaryExpanded: '今日通知分析' },
-  ja: { title: '🔔 通知', readAll: 'すべて既読', allTab: 'すべて', summary: 'タップでスマート要約を表示', summaryExpanded: '本日の通知分析' },
-  ko: { title: '🔔 알림', readAll: '모두 읽음', allTab: '전체', summary: '탭하여 스마트 요약 보기', summaryExpanded: '오늘의 알림 분석' },
-}
-
-const categoryI18n: Record<Lang, Record<NotiCategory, string>> = {
-  vi: { transaction: 'Giao dịch', promo: 'Ưu đãi', system: 'Hệ thống', personal: 'Cá nhân' },
-  en: { transaction: 'Trading', promo: 'Offers', system: 'System', personal: 'Personal' },
-  zh: { transaction: '交易', promo: '优惠', system: '系统', personal: '个人' },
-  ja: { transaction: '取引', promo: '特典', system: 'システム', personal: '個人' },
-  ko: { transaction: '거래', promo: '혜택', system: '시스템', personal: '개인' },
-}
-
-const aiSummaryLines = aiSummaryI18n.vi
-
-function AiSummaryCard({ expanded, onToggle, onDetail, lang = 'vi' as Lang }: { expanded: boolean; onToggle: () => void; onDetail: () => void; lang?: Lang }) {
-  const summaryLines = aiSummaryI18n[lang] || aiSummaryI18n.vi
-  const ht = headerI18n[lang] || headerI18n.vi
+function AiSummaryCard({ expanded, onToggle, onDetail }: { expanded: boolean; onToggle: () => void; onDetail: () => void }) {
   const [visibleLines, setVisibleLines] = useState(0)
   const [typingIdx, setTypingIdx] = useState(-1)
   const [typedChars, setTypedChars] = useState(0)
@@ -183,8 +37,8 @@ function AiSummaryCard({ expanded, onToggle, onDetail, lang = 'vi' as Lang }: { 
   }, [expanded])
 
   useEffect(() => {
-    if (typingIdx < 0 || typingIdx >= summaryLines.length) return
-    const line = summaryLines[typingIdx]
+    if (typingIdx < 0 || typingIdx >= aiSummaryLines.length) return
+    const line = aiSummaryLines[typingIdx]
     if (intervalRef.current) clearInterval(intervalRef.current)
     intervalRef.current = setInterval(() => {
       setTypedChars(prev => {
@@ -235,7 +89,7 @@ function AiSummaryCard({ expanded, onToggle, onDetail, lang = 'vi' as Lang }: { 
             <span style={{ fontSize: 8, background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', color: '#fff', padding: '1px 5px', borderRadius: 4, fontWeight: 600, letterSpacing: 0.5 }}>BETA</span>
           </div>
           <div style={{ fontSize: 10, color: '#64748b', marginTop: 1 }}>
-            {expanded ? ht.summaryExpanded : ht.summary}
+            {expanded ? 'Phân tích thông báo hôm nay' : 'Nhấn để xem tóm tắt thông minh'}
           </div>
         </div>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }}>
@@ -245,7 +99,7 @@ function AiSummaryCard({ expanded, onToggle, onDetail, lang = 'vi' as Lang }: { 
 
       {expanded && (
         <div style={{ padding: '6px 12px 12px', background: '#fafbfc' }}>
-          {summaryLines.map((line, i) => {
+          {aiSummaryLines.map((line, i) => {
             if (i > visibleLines) return null
             const isTyping = i === typingIdx
             const displayText = isTyping ? line.text.slice(0, typedChars) : (i < visibleLines ? line.text : '')
@@ -269,7 +123,7 @@ function AiSummaryCard({ expanded, onToggle, onDetail, lang = 'vi' as Lang }: { 
               </div>
             )
           })}
-          {visibleLines >= summaryLines.length && (
+          {visibleLines >= aiSummaryLines.length && (
             <div style={{ display: 'flex', gap: 6, marginTop: 6, padding: '0 4px' }}>
               <button onClick={(e) => e.stopPropagation()} style={{ flex: 1, padding: '7px 0', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 10, fontWeight: 600, color: '#7c3aed', cursor: 'pointer' }}>
                 🔄 Làm mới
@@ -430,7 +284,6 @@ export default function InboxUXPanel() {
   const [aiExpanded, setAiExpanded] = useState(false)
   const [showDailyBrief, setShowDailyBrief] = useState(false)
   const [interests, setInterests] = useState<Set<SubCategory>>(new Set(['Bond', 'Stock']))
-  const [lang, setLang] = useState<Lang>('vi')
 
   const toggleInterest = (sub: SubCategory) => {
     setInterests(prev => {
@@ -451,14 +304,12 @@ export default function InboxUXPanel() {
   const unreadCount = notifications.filter(n => n.unread && !readIds.has(n.id)).length
   const currentSubs = filter !== 'all' ? subCategoryMap[filter] : null
 
-  const t = headerI18n[lang]
-  const catLabels = categoryI18n[lang]
   const categories: { key: NotiCategory | 'all'; label: string; count?: number }[] = [
-    { key: 'all', label: t.allTab, count: unreadCount },
-    { key: 'transaction', label: catLabels.transaction },
-    { key: 'promo', label: catLabels.promo },
-    { key: 'system', label: catLabels.system },
-    { key: 'personal', label: catLabels.personal },
+    { key: 'all', label: 'Tất cả', count: unreadCount },
+    { key: 'transaction', label: 'Giao dịch' },
+    { key: 'promo', label: 'Ưu đãi' },
+    { key: 'system', label: 'Hệ thống' },
+    { key: 'personal', label: 'Cá nhân' },
   ]
 
   return (
@@ -474,22 +325,8 @@ export default function InboxUXPanel() {
           <div style={{ maxWidth: 340, margin: '0 auto', border: '2px solid #e2e8f0', borderRadius: 28, overflow: 'hidden', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}>
             <div style={{ background: 'linear-gradient(135deg, #534AB7, #7F77DD)', color: '#fff', padding: '20px 16px 14px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ fontSize: 18, fontWeight: 700 }}>{t.title}</span>
-                <span style={{ fontSize: 11, opacity: 0.8, cursor: 'pointer' }} onClick={() => setReadIds(new Set(notifications.map(n => n.id)))}>{t.readAll}</span>
-              </div>
-              <div style={{ display: 'flex', gap: 3, marginBottom: 10 }}>
-                {langOptions.map(lo => (
-                  <button
-                    key={lo.key}
-                    onClick={() => setLang(lo.key)}
-                    style={{
-                      padding: '3px 7px', fontSize: 10, border: 'none', borderRadius: 6, cursor: 'pointer',
-                      background: lang === lo.key ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.08)',
-                      color: '#fff', fontWeight: lang === lo.key ? 700 : 400,
-                      transition: 'all 0.15s',
-                    }}
-                  >{lo.flag} {lo.label}</button>
-                ))}
+                <span style={{ fontSize: 18, fontWeight: 700 }}>🔔 Thông báo</span>
+                <span style={{ fontSize: 11, opacity: 0.8, cursor: 'pointer' }} onClick={() => setReadIds(new Set(notifications.map(n => n.id)))}>Đọc tất cả</span>
               </div>
               <div style={{ display: 'flex', background: 'rgba(255,255,255,0.15)', borderRadius: 10, padding: 3 }}>
                 {categories.map(c => (
@@ -539,16 +376,12 @@ export default function InboxUXPanel() {
                 })}
               </div>
             )}
-            <AiSummaryCard expanded={aiExpanded} onToggle={() => setAiExpanded(!aiExpanded)} onDetail={() => setShowDailyBrief(true)} lang={lang} />
+            <AiSummaryCard expanded={aiExpanded} onToggle={() => setAiExpanded(!aiExpanded)} onDetail={() => setShowDailyBrief(true)} />
             <div style={{ maxHeight: 480, overflowY: 'auto' }}>
               {sorted.map(n => {
                 const meta = categoryMeta[n.category]
                 const isUnread = n.unread && !readIds.has(n.id)
                 const isInterested = n.subCategory && interests.has(n.subCategory)
-                const tr = notiI18n[n.id]?.[lang]
-                const title = tr?.title ?? n.title
-                const desc = tr?.desc ?? n.desc
-                const cta = tr?.cta ?? n.cta
                 return (
                   <div
                     key={n.id}
@@ -570,24 +403,24 @@ export default function InboxUXPanel() {
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span style={{ fontSize: 13, fontWeight: isUnread ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{title}</span>
+                        <span style={{ fontSize: 13, fontWeight: isUnread ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{n.title}</span>
                         {n.grouped && (
                           <span style={{ fontSize: 9, background: meta.bg, color: meta.color, padding: '1px 6px', borderRadius: 4, fontWeight: 600, flexShrink: 0 }}>
                             {n.groupCount} gộp
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{desc}</div>
+                      <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.desc}</div>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 5 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           <span style={{ fontSize: 9, color: '#cbd5e1' }}>{n.time}</span>
-                          <span style={{ fontSize: 9, background: meta.bg, color: meta.color, padding: '0 5px', borderRadius: 3, fontWeight: 500 }}>{catLabels[n.category]}</span>
+                          <span style={{ fontSize: 9, background: meta.bg, color: meta.color, padding: '0 5px', borderRadius: 3, fontWeight: 500 }}>{meta.label}</span>
                           {n.subCategory && (
                             <span style={{ fontSize: 8, background: '#f8fafc', color: '#94a3b8', padding: '0 4px', borderRadius: 3, border: '1px solid #e2e8f0' }}>{n.subCategory}</span>
                           )}
                         </div>
-                        {cta && (
-                          <span style={{ fontSize: 10, color: '#7c3aed', fontWeight: 600, cursor: 'pointer' }}>{cta} →</span>
+                        {n.cta && (
+                          <span style={{ fontSize: 10, color: '#7c3aed', fontWeight: 600, cursor: 'pointer' }}>{n.cta} →</span>
                         )}
                       </div>
                     </div>
