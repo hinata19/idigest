@@ -112,6 +112,31 @@ export const cooldownMatrix = [
   { after: 'Giao dịch', push: '1h*', inbox: '0', email: '0', sms: '0' },
 ]
 
+/* ── Market Ticker (Binance-style) ── */
+
+export interface MarketIndex {
+  symbol: string
+  name: string
+  value: number
+  change: number
+  changePct: number
+}
+
+export const marketTicker: MarketIndex[] = [
+  { symbol: 'VNINDEX', name: 'VN-Index', value: 1285.42, change: 12.35, changePct: 0.97 },
+  { symbol: 'HNX', name: 'HNX', value: 235.18, change: -1.42, changePct: -0.60 },
+  { symbol: 'UPCOM', name: 'UPCOM', value: 95.32, change: 0.28, changePct: 0.29 },
+]
+
+export const portfolioSummary = {
+  totalAsset: 1_250_000_000,
+  todayPnL: 15_200_000,
+  todayPnLPct: 1.23,
+  buyingPower: 350_000_000,
+  marginRatio: 132,
+  positions: 8,
+}
+
 export const channelConfig = [
   { channel: 'Push', categories: ['Giao dịch', 'Ưu đãi', 'Hệ thống', 'Cá nhân'], limit: 'Max 2/ngày', quietHours: '22h — 7h', note: 'KH tự điều chỉnh trong Settings' },
   { channel: 'In-app Inbox', categories: ['Giao dịch', 'Ưu đãi', 'Hệ thống', 'Cá nhân'], limit: 'Max 5 promo/tuần', note: 'Auto-group nếu > 2 cùng loại/ngày' },
