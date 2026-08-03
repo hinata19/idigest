@@ -215,98 +215,124 @@ function MarketTicker({ visible }: { visible: boolean }) {
 }
 
 /* ═══════════════════════════════════════════
-   AI PRIORITY CARD
+   AI SUMMARY CARD
    ═══════════════════════════════════════════ */
 
-const aiPriorityItems = [
-  { id: 'n13', severity: 'critical' as const, letter: '!', color: T.red, bg: T.redBg, title: 'Margin Call: ký quỹ 132%', sub: 'Nạp thêm hoặc bán bớt trước 14h', cta: 'Xử lý' },
-  { id: 'n14', severity: 'high' as const, letter: '↗', color: T.green, bg: T.greenBg, title: '8 tín hiệu mới hôm nay', sub: 'ACB ↑MA50, HPG ↑30K nổi bật', cta: 'Xem' },
-  { id: 'n1', severity: 'high' as const, letter: 'S', color: T.orange, bg: T.orangeBg, title: 'MWG x500 khớp 52,300', sub: 'Tổng GT 26.1tr', cta: 'Chi tiết' },
+const aiSummaryLines = [
+  { icon: '⚠', text: 'Margin Call: ký quỹ 132% — cần xử lý trước 14h', color: T.red, bg: '#FEF2F2', border: '#FECACA', notiId: 'n13' },
+  { icon: '↗', text: '8 tín hiệu kỹ thuật mới — ACB, HPG nổi bật', color: T.green, bg: '#ECFDF5', border: '#BBF7D0', notiId: 'n14' },
+  { icon: '↔', text: 'MWG x500 khớp 52,300 — tổng GT 26.1tr', color: T.orange, bg: '#FFF7ED', border: '#FED7AA', notiId: 'n1' },
+  { icon: '★', text: '3 ưu đãi phù hợp — Bond 9.5% (fit score 87)', color: T.violet, bg: '#F5F3FF', border: '#DDD6FE', notiId: 'n3' },
+  { icon: '⛨', text: 'Bảo mật: chưa bật xác thực 2 lớp', color: T.blue, bg: '#EFF6FF', border: '#BFDBFE', notiId: 'n4' },
 ]
 
-function AiPriorityCard({ onViewBrief, onTapItem, expanded, onToggle }: {
+function AiSummaryCard({ onViewBrief, onTapItem, expanded, onToggle }: {
   onViewBrief: () => void; onTapItem: (id: string) => void; expanded: boolean; onToggle: () => void
 }) {
+  const [visibleLines, setVisibleLines] = useState(0)
+
+  useEffect(() => {
+    if (!expanded) { setVisibleLines(0); return }
+    setVisibleLines(0)
+    const timers: ReturnType<typeof setTimeout>[] = []
+    aiSummaryLines.forEach((_, i) => {
+      timers.push(setTimeout(() => setVisibleLines(i + 1), 200 + i * 280))
+    })
+    return () => timers.forEach(clearTimeout)
+  }, [expanded])
+
   return (
-    <div style={{ margin: '12px 14px', borderRadius: 14, overflow: 'hidden', border: `1px solid ${T.primaryBorder}`, background: T.surface }}>
+    <div style={{ margin: '12px 14px', borderRadius: 16, overflow: 'hidden', border: `1px solid ${T.primaryBorder}`, background: T.surface, boxShadow: '0 2px 12px rgba(79,70,229,0.06)' }}>
       <div
         onClick={onToggle}
         style={{
           padding: '14px 16px', cursor: 'pointer',
-          background: `linear-gradient(135deg, ${T.primarySoft}, #F5F3FF, ${T.greenBg})`,
+          background: `linear-gradient(135deg, ${T.primarySoft}, #F5F3FF, #ECFDF5)`,
           display: 'flex', alignItems: 'center', gap: 10,
         }}
       >
         <div style={{
-          width: 36, height: 36, borderRadius: 10,
+          width: 38, height: 38, borderRadius: 11,
           background: `linear-gradient(135deg, ${T.primary}, ${T.violet})`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 16, color: '#fff', flexShrink: 0,
-          boxShadow: `0 2px 8px ${T.primary}40`,
+          fontSize: 18, color: '#fff', flexShrink: 0,
+          animation: expanded ? 'none' : 'aiPulse 2s ease-in-out infinite',
+          boxShadow: `0 3px 10px ${T.primary}30`,
         }}>
           ✦
         </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: T.text, letterSpacing: -0.2 }}>
-            {aiPriorityItems.length} việc cần làm ngay
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 14, fontWeight: 700, color: T.text, letterSpacing: -0.3 }}>
+              AI tóm tắt hôm nay
+            </span>
+            <span style={{
+              fontSize: 9, fontWeight: 800, color: T.violet, background: T.violetBg,
+              padding: '2px 6px', borderRadius: 4, border: `1px solid ${T.violet}30`,
+              letterSpacing: 0.5, lineHeight: 1,
+            }}>BETA</span>
           </div>
           <div style={{ fontSize: 11, color: T.textMute, marginTop: 2 }}>
-            {expanded ? '1 margin call · 1 tín hiệu · 1 giao dịch' : 'Nhấn để xem chi tiết'}
+            {expanded ? '17 thông báo · 1 cảnh báo · 3 tín hiệu' : 'Nhấn để xem AI tóm tắt 17 thông báo'}
           </div>
         </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={T.textMute} strokeWidth="2" style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s' }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={T.textMute} strokeWidth="2" style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s', flexShrink: 0 }}>
           <path d="m6 9 6 6 6-6" />
         </svg>
       </div>
 
       {expanded && (
-        <div style={{ padding: '4px 12px 12px' }}>
-          {aiPriorityItems.map((item, i) => (
+        <div style={{ padding: '6px 12px 12px' }}>
+          {aiSummaryLines.map((line, i) => (
             <div
-              key={item.id}
-              onClick={() => onTapItem(item.id)}
+              key={i}
+              onClick={() => onTapItem(line.notiId)}
               style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '10px 8px', cursor: 'pointer',
-                borderBottom: i < aiPriorityItems.length - 1 ? `1px solid ${T.borderSoft}` : 'none',
-                borderRadius: 8, transition: 'background 0.15s',
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '8px 10px', margin: '3px 0', cursor: 'pointer',
+                background: line.bg, borderRadius: 8,
+                border: `1px solid ${line.border}`,
+                opacity: i < visibleLines ? 1 : 0,
+                transform: i < visibleLines ? 'translateY(0)' : 'translateY(6px)',
+                maxHeight: i < visibleLines ? 60 : 0,
+                transition: 'opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease',
+                overflow: 'hidden',
               }}
             >
-              <div style={{
-                width: 32, height: 32, borderRadius: 8, background: item.bg,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 14, fontWeight: 700, color: item.color, flexShrink: 0,
-                border: `1px solid ${item.color}25`,
-              }}>
-                {item.letter}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{item.title}</div>
-                <div style={{ fontSize: 11, color: T.textMute, marginTop: 1 }}>{item.sub}</div>
-              </div>
               <span style={{
-                fontSize: 11, fontWeight: 600, color: item.severity === 'critical' ? T.red : T.primary,
-                padding: '4px 10px', borderRadius: 6,
-                background: item.severity === 'critical' ? T.redBg : T.primarySoft,
-                border: `1px solid ${item.severity === 'critical' ? '#FECACA' : T.primaryBorder}`,
-                cursor: 'pointer', flexShrink: 0,
+                width: 24, height: 24, borderRadius: 6, background: `${line.color}15`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 12, fontWeight: 700, color: line.color, flexShrink: 0,
               }}>
-                {item.cta} →
+                {line.icon}
+              </span>
+              <span style={{ fontSize: 12, color: T.text, fontWeight: 500, lineHeight: 1.4, flex: 1 }}>
+                {line.text}
               </span>
             </div>
           ))}
 
-          <button
-            onClick={(e) => { e.stopPropagation(); onViewBrief() }}
-            style={{
-              width: '100%', marginTop: 8, padding: '10px', border: `1px dashed ${T.primaryBorder}`,
-              borderRadius: 8, background: 'transparent', color: T.primary,
-              fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex',
-              alignItems: 'center', justifyContent: 'center', gap: 6,
-            }}
-          >
-            ✦ Xem AI Daily Brief
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+            <button
+              onClick={(e) => { e.stopPropagation(); onViewBrief() }}
+              style={{
+                flex: 1, padding: '9px 14px', border: `1px solid ${T.primaryBorder}`,
+                borderRadius: 8, background: T.primarySoft, color: T.primary,
+                fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              }}
+            >
+              ✦ Xem AI Daily Brief →
+            </button>
+          </div>
+
+          <div style={{
+            fontSize: 10, color: T.textMute, textAlign: 'center', marginTop: 8,
+            padding: '6px 0', borderTop: `1px solid ${T.borderSoft}`,
+            fontStyle: 'italic',
+          }}>
+            ✦ AI đã lọc 6 thông báo spam/trùng lặp
+          </div>
         </div>
       )}
     </div>
@@ -1006,6 +1032,182 @@ function DailyBriefModal({ open, onClose }: { open: boolean; onClose: () => void
 }
 
 /* ═══════════════════════════════════════════
+   PREFERENCE CENTER
+   ═══════════════════════════════════════════ */
+
+const defaultPrefs = {
+  push: { transaction: true, promo: true, system: true, personal: true },
+  email: { transaction: true, promo: true, system: true, personal: false },
+  weeklyDigest: false,
+  quietHours: true,
+}
+
+function Toggle({ on, onToggle, disabled }: { on: boolean; onToggle: () => void; disabled?: boolean }) {
+  return (
+    <button
+      onClick={disabled ? undefined : onToggle}
+      style={{
+        width: 40, height: 22, borderRadius: 11, border: 'none', cursor: disabled ? 'default' : 'pointer',
+        background: on ? T.primary : '#CBD5E1', padding: 2,
+        transition: 'background 0.2s', opacity: disabled ? 0.5 : 1,
+        display: 'flex', alignItems: 'center',
+      }}
+    >
+      <div style={{
+        width: 18, height: 18, borderRadius: 9, background: '#fff',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+        transform: on ? 'translateX(18px)' : 'translateX(0)',
+        transition: 'transform 0.2s',
+      }} />
+    </button>
+  )
+}
+
+function PreferenceCenter({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [prefs, setPrefs] = useState(defaultPrefs)
+
+  if (!open) return null
+
+  const togglePush = (cat: NotiCategory) => {
+    if (cat === 'transaction') return
+    setPrefs(p => ({ ...p, push: { ...p.push, [cat]: !p.push[cat] } }))
+  }
+  const toggleEmail = (cat: NotiCategory) => {
+    if (cat === 'transaction') return
+    setPrefs(p => ({ ...p, email: { ...p.email, [cat]: !p.email[cat] } }))
+  }
+
+  const categories: { key: NotiCategory; label: string; color: string; icon: string }[] = [
+    { key: 'transaction', label: 'Giao dịch', color: T.orange, icon: '↔' },
+    { key: 'promo', label: 'Ưu đãi', color: T.violet, icon: '★' },
+    { key: 'system', label: 'Hệ thống', color: T.blue, icon: '⚙' },
+    { key: 'personal', label: 'Cá nhân', color: T.green, icon: '◇' },
+  ]
+
+  return (
+    <div style={{
+      position: 'absolute', inset: 0, background: T.bg, zIndex: 25,
+      display: 'flex', flexDirection: 'column',
+      animation: 'slideInLeft 0.25s ease-out',
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '14px 16px', borderBottom: `1px solid ${T.border}`, background: T.surface,
+      }}>
+        <button onClick={onClose} style={{
+          width: 32, height: 32, borderRadius: 8, border: `1px solid ${T.border}`,
+          background: T.surface, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={T.text} strokeWidth="2"><path d="m15 18-6-6 6-6" /></svg>
+        </button>
+        <span style={{ flex: 1, fontSize: 15, fontWeight: 700, color: T.text }}>Quản lý thông báo</span>
+      </div>
+
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+        {/* Push Notifications */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.textMute, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>
+            Push Notification
+          </div>
+          <div style={{ background: T.surface, borderRadius: 12, border: `1px solid ${T.border}`, overflow: 'hidden' }}>
+            {categories.map((cat, i) => (
+              <div key={cat.key} style={{
+                display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px',
+                borderBottom: i < categories.length - 1 ? `1px solid ${T.borderSoft}` : 'none',
+              }}>
+                <span style={{
+                  width: 28, height: 28, borderRadius: 7, background: `${cat.color}12`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 12, fontWeight: 700, color: cat.color, flexShrink: 0,
+                }}>{cat.icon}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{cat.label}</div>
+                  {cat.key === 'transaction' && (
+                    <div style={{ fontSize: 10, color: T.textMute }}>Luôn bật — không thể tắt</div>
+                  )}
+                </div>
+                <Toggle on={prefs.push[cat.key]} onToggle={() => togglePush(cat.key)} disabled={cat.key === 'transaction'} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Email */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.textMute, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>
+            Email
+          </div>
+          <div style={{ background: T.surface, borderRadius: 12, border: `1px solid ${T.border}`, overflow: 'hidden' }}>
+            {categories.map((cat, i) => (
+              <div key={cat.key} style={{
+                display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px',
+                borderBottom: i < categories.length - 1 ? `1px solid ${T.borderSoft}` : 'none',
+              }}>
+                <span style={{
+                  width: 28, height: 28, borderRadius: 7, background: `${cat.color}12`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 12, fontWeight: 700, color: cat.color, flexShrink: 0,
+                }}>{cat.icon}</span>
+                <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: T.text }}>{cat.label}</span>
+                <Toggle on={prefs.email[cat.key]} onToggle={() => toggleEmail(cat.key)} disabled={cat.key === 'transaction'} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Weekly Digest */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.textMute, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>
+            Tùy chọn nâng cao
+          </div>
+          <div style={{ background: T.surface, borderRadius: 12, border: `1px solid ${T.border}`, overflow: 'hidden' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderBottom: `1px solid ${T.borderSoft}` }}>
+              <span style={{
+                width: 28, height: 28, borderRadius: 7, background: T.primarySoft,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 12, color: T.primary, flexShrink: 0,
+              }}>📧</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>Weekly Digest</div>
+                <div style={{ fontSize: 10, color: T.textMute }}>Gộp email thành 1 bản tổng hợp/tuần</div>
+              </div>
+              <Toggle on={prefs.weeklyDigest} onToggle={() => setPrefs(p => ({ ...p, weeklyDigest: !p.weeklyDigest }))} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px' }}>
+              <span style={{
+                width: 28, height: 28, borderRadius: 7, background: T.amberBg,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 12, color: T.amber, flexShrink: 0,
+              }}>🌙</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>Quiet Hours</div>
+                <div style={{ fontSize: 10, color: T.textMute }}>Không gửi push từ 22h — 7h</div>
+              </div>
+              <Toggle on={prefs.quietHours} onToggle={() => setPrefs(p => ({ ...p, quietHours: !p.quietHours }))} />
+            </div>
+          </div>
+        </div>
+
+        {/* Channel info */}
+        <div style={{
+          background: T.primarySoft, border: `1px solid ${T.primaryBorder}`,
+          borderRadius: 12, padding: '12px 14px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+            <span style={{ fontSize: 12, color: T.primary }}>ℹ</span>
+            <span style={{ fontSize: 11, fontWeight: 700, color: T.primary }}>Giới hạn tự động</span>
+          </div>
+          <div style={{ fontSize: 11, color: T.textSec, lineHeight: 1.6 }}>
+            Push: max 2 promo/ngày · Inbox: max 5 promo/tuần<br />
+            Email: max 2 promo/tuần · SMS: chỉ giao dịch + bảo mật
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════
    MAIN COMPONENT
    ═══════════════════════════════════════════ */
 
@@ -1018,6 +1220,7 @@ export default function InboxUXPanel() {
   const [showChat, setShowChat] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
   const [showBrief, setShowBrief] = useState(false)
+  const [showPrefs, setShowPrefs] = useState(false)
   const [showLowPriority, setShowLowPriority] = useState(false)
   const [tickerOpen, setTickerOpen] = useState(true)
   const [aiExpanded, setAiExpanded] = useState(true)
@@ -1115,6 +1318,14 @@ export default function InboxUXPanel() {
                     <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
                   </svg>
                 </button>
+                <button onClick={() => setShowPrefs(true)} style={{
+                  width: 34, height: 34, borderRadius: 10, border: `1px solid ${T.border}`,
+                  background: T.surface, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={T.textMute} strokeWidth="2" strokeLinecap="round">
+                    <circle cx="12" cy="12" r="3" /><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
+                  </svg>
+                </button>
                 <button onClick={() => markAllRead()} style={{
                   width: 34, height: 34, borderRadius: 10, border: `1px solid ${T.border}`,
                   background: T.surface, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1166,8 +1377,8 @@ export default function InboxUXPanel() {
                     </div>
                   </div>
 
-                  {/* AI Priority Card */}
-                  <AiPriorityCard
+                  {/* AI Summary Card */}
+                  <AiSummaryCard
                     expanded={aiExpanded}
                     onToggle={() => setAiExpanded(!aiExpanded)}
                     onViewBrief={() => setShowBrief(true)}
@@ -1399,53 +1610,70 @@ export default function InboxUXPanel() {
               onSelect={handleTapNoti}
               readIds={readIds}
             />
+
+            <PreferenceCenter
+              open={showPrefs}
+              onClose={() => setShowPrefs(false)}
+            />
           </div>
         </div>
 
         {/* ═══ RIGHT PANEL — DESIGN NOTES ═══ */}
         <div>
           <h3 className="text-base font-bold mb-4" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ color: T.primary }}>✦</span> Redesign v2 — Design Notes
+            <span style={{ color: T.primary }}>✦</span> Inbox UX Redesign — Spec Overview
           </h3>
 
-          {/* Key changes */}
+          {/* 4 Categories */}
           <div className="panel" style={{ borderLeft: `3px solid ${T.primary}`, borderRadius: '0 14px 14px 0', marginBottom: 16 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 10 }}>Thay đổi chính</div>
-            <div className="text-xs text-slate-600 space-y-2.5 leading-relaxed">
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 10 }}>4 Category Inbox</div>
+            <div className="text-xs text-slate-600 space-y-2 leading-relaxed">
               {[
-                { before: 'Flat category tabs', after: '3-tier nav: AI Feed → Categories → Archive', why: 'Superhuman split inbox model' },
-                { before: 'Everything visible on load', after: 'Progressive disclosure — P3/P4 collapsed', why: '3-second comprehension rule' },
-                { before: 'No detail screen', after: 'Full detail + AI Explain + CTAs', why: 'Robinhood context model' },
-                { before: 'No AI chat', after: 'Context-aware AI bottom sheet', why: 'ChatGPT + portfolio data' },
-                { before: 'No search', after: 'Full search with recent + filters', why: 'Linear/Notion pattern' },
-                { before: 'Emoji icons', after: 'Letter-based circles', why: 'Consistent visual weight' },
-                { before: 'No FAB', after: 'AI FAB for instant AI access', why: 'Coinbase action button' },
-              ].map((change, i) => (
-                <div key={i} style={{ display: 'flex', gap: 8, padding: '6px 8px', background: i % 2 === 0 ? T.primarySoft : T.bg, borderRadius: 6 }}>
+                { cat: 'Giao dịch', color: T.orange, desc: 'Lệnh khớp, nạp/rút, cổ tức, margin', freq: 'Không giới hạn — gửi ngay' },
+                { cat: 'Ưu đãi', color: T.violet, desc: 'Campaign, mời sản phẩm, voucher', freq: 'Frequency cap + smart grouping' },
+                { cat: 'Hệ thống', color: T.blue, desc: 'Bảo trì, bảo mật, OTP, cập nhật', freq: 'Pin lên đầu inbox' },
+                { cat: 'Cá nhân', color: T.green, desc: 'Lời mời event, sinh nhật, phân tích', freq: 'Không áp frequency cap' },
+              ].map((c, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8, padding: '8px 10px', background: `${c.color}08`, borderRadius: 8, borderLeft: `3px solid ${c.color}` }}>
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 2 }}>
-                      <span style={{ textDecoration: 'line-through', color: T.textMute }}>{change.before}</span>
-                      <span style={{ color: T.textMute }}>→</span>
-                      <span style={{ fontWeight: 600, color: T.primary }}>{change.after}</span>
-                    </div>
-                    <div style={{ color: T.textMute, fontSize: 10 }}>{change.why}</div>
+                    <div style={{ fontWeight: 700, color: c.color, fontSize: 12, marginBottom: 2 }}>{c.cat}</div>
+                    <div style={{ color: T.textSec, fontSize: 11 }}>{c.desc}</div>
+                    <div style={{ color: T.textMute, fontSize: 10, marginTop: 2, fontStyle: 'italic' }}>{c.freq}</div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Design Principles */}
+          {/* Smart Grouping */}
+          <div className="panel" style={{ borderLeft: `3px solid ${T.green}`, borderRadius: '0 14px 14px 0', marginBottom: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 10 }}>Smart Grouping</div>
+            <div className="text-xs text-slate-600 space-y-1.5 leading-relaxed">
+              {[
+                'Nhiều sản phẩm mời cùng ngày → gộp 1 inbox card carousel',
+                'Lệnh khớp liên tiếp → gộp 1 summary: "5 lệnh khớp hôm nay"',
+                'Campaign cùng chiến dịch → chỉ hiện tin mới nhất',
+                'Hệ thống cùng loại → stack và hiện badge số lượng',
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: 6, padding: '4px 0', alignItems: 'flex-start' }}>
+                  <span style={{ color: T.green, fontWeight: 700, flexShrink: 0 }}>→</span>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Key Features */}
           <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
-            Design Principles
+            Tính năng chính
           </div>
           <div className="space-y-2 mb-5">
             {[
-              { title: '3-Second Comprehension', desc: 'User knows: urgent? how many new? market? — in 3 seconds', color: T.primary },
-              { title: 'Less Info, More Value', desc: '50 notifications → 5 priority items + AI summary', color: T.green },
-              { title: 'AI Enhances, Never Gatekeeps', desc: 'Every AI feature has a bypass. User controls everything.', color: T.amber },
-              { title: 'Critical Alerts Break All Rules', desc: 'Margin Call bypasses grouping, quiet hours, AI ranking', color: T.red },
-              { title: 'One-Handed, One-Minute', desc: 'Entire inbox consumed with one thumb in under 2 minutes', color: T.textMute },
+              { title: 'AI Summary Card', desc: 'Tóm tắt 17 thông báo bằng AI — typing animation + BETA badge', color: T.primary },
+              { title: 'AI Daily Brief', desc: 'Modal chi tiết: hành động, tín hiệu, giao dịch, ưu đãi phù hợp', color: T.violet },
+              { title: 'Preference Center', desc: 'Bật/tắt push & email theo category, Weekly Digest, Quiet Hours', color: T.green },
+              { title: 'Channel Routing', desc: 'Push max 2/ngày · Inbox max 5/tuần · Email max 2/tuần · SMS chỉ GD', color: T.blue },
+              { title: 'AI Explain & Ask', desc: 'Giải thích context-aware + chat bottom sheet cho mỗi notification', color: T.amber },
             ].map((p, i) => (
               <div key={i} className="panel" style={{ borderLeft: `3px solid ${p.color}`, borderRadius: '0 14px 14px 0', padding: 12, marginBottom: 0 }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: T.text }}>{p.title}</div>
@@ -1454,54 +1682,46 @@ export default function InboxUXPanel() {
             ))}
           </div>
 
-          {/* AI Features */}
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ color: T.primary }}>✦</span> AI Features (8)
+          {/* Frequency Rules */}
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 10 }}>
+            Smart Suppression Rules (6)
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 20 }}>
             {[
-              { name: 'AI Priority', desc: 'Rank by urgency × relevance', effort: 'M' },
-              { name: 'AI Timeline', desc: 'Event chain reconstruction', effort: 'M' },
-              { name: 'AI Insight', desc: 'Proactive observations', effort: 'H' },
-              { name: 'AI Explain', desc: 'Why this notification?', effort: 'L' },
-              { name: 'AI Recommend', desc: 'Behavioral suggestions', effort: 'H' },
-              { name: 'AI Ask', desc: 'Context-aware chat', effort: 'H' },
-              { name: 'AI Follow-up', desc: 'Track state changes', effort: 'M' },
-              { name: 'AI Personalize', desc: 'Learn from behavior', effort: 'H' },
-            ].map((f, i) => (
-              <div key={i} style={{
-                padding: '10px 12px', background: T.surface, border: `1px solid ${T.border}`,
-                borderRadius: 10,
-              }}>
+              { id: 'R1', name: 'Post-transaction cooldown', desc: 'GD trong 1h → không promo', color: '#ef4444', triggered: 342 },
+              { id: 'R2', name: 'Dismiss streak', desc: 'Dismiss 3x → giảm 50%', color: '#f59e0b', triggered: 128 },
+              { id: 'R3', name: 'Newcomer protection', desc: '<7 ngày → chỉ onboarding', color: '#8b5cf6', triggered: 567 },
+              { id: 'R4', name: 'Dormant gentle touch', desc: '>30 ngày → 1 push/tuần', color: '#06b6d4', triggered: 215 },
+              { id: 'R5', name: 'Product dedup', desc: 'Cùng SP 14 ngày → skip', color: '#3b82f6', triggered: 891 },
+              { id: 'R6', name: 'Low perf auto-pause', desc: 'Open <5% → auto-pause', color: '#ec4899', triggered: 3 },
+            ].map((r, i) => (
+              <div key={i} style={{ padding: '10px 12px', background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, borderLeft: `3px solid ${r.color}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: T.primary }}>{f.name}</span>
-                  <span style={{
-                    fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 4,
-                    background: f.effort === 'L' ? T.greenBg : f.effort === 'M' ? T.amberBg : T.redBg,
-                    color: f.effort === 'L' ? T.green : f.effort === 'M' ? T.amber : T.red,
-                  }}>{f.effort}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: r.color }}>{r.id}</span>
+                  <span style={{ fontSize: 9, fontWeight: 600, color: T.textMute, background: T.bg, padding: '1px 5px', borderRadius: 4 }}>{r.triggered}x</span>
                 </div>
-                <div style={{ fontSize: 10, color: T.textMute }}>{f.desc}</div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: T.text, marginBottom: 2 }}>{r.name}</div>
+                <div style={{ fontSize: 10, color: T.textMute }}>{r.desc}</div>
               </div>
             ))}
           </div>
 
-          {/* Comparison summary */}
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 10 }}>
-            Benchmark Sources
-          </div>
+          {/* Impact metrics */}
           <div className="panel" style={{ background: '#0F172A', color: '#E2E8F0', border: 'none', borderRadius: 14 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>Dự kiến Impact</div>
             <div className="text-xs space-y-2" style={{ color: '#CBD5E1' }}>
               {[
-                { app: 'Binance', take: 'Ticker strip, P/I/E toggles, critical alerts always on', color: '#F0B90B' },
-                { app: 'Robinhood', take: 'Portfolio context in inbox, clean card design', color: '#00C805' },
-                { app: 'Revolut', take: 'Receipt-style detail, generous whitespace', color: '#0075EB' },
-                { app: 'Superhuman', take: 'AI Feed as default, split inbox, speed-first', color: '#BC6CFF' },
-                { app: 'ChatGPT', take: 'Context-aware AI chat, streaming responses', color: '#10A37F' },
-              ].map((ref, i) => (
-                <div key={i} style={{ display: 'flex', gap: 8, padding: '6px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: 6, borderLeft: `3px solid ${ref.color}` }}>
-                  <span style={{ fontWeight: 700, color: ref.color, fontSize: 11, width: 80, flexShrink: 0 }}>{ref.app}</span>
-                  <span style={{ fontSize: 10, color: '#94A3B8' }}>{ref.take}</span>
+                { metric: 'Open rate', before: '~15%', after: '~42%', delta: '+180%', color: '#4ADE80' },
+                { metric: 'Click-through', before: '~3%', after: '~12%', delta: '+300%', color: '#38BDF8' },
+                { metric: 'Opt-out rate', before: 'Cao', after: 'Giảm 30%', delta: '-30%', color: '#F0B90B' },
+                { metric: 'Spam cảm nhận', before: 'Cao', after: 'Thấp', delta: '↓↓', color: '#C084FC' },
+              ].map((m, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: 6 }}>
+                  <span style={{ fontSize: 11, color: '#94A3B8', width: 85, flexShrink: 0 }}>{m.metric}</span>
+                  <span style={{ fontSize: 10, color: '#64748B', width: 40, textAlign: 'center' }}>{m.before}</span>
+                  <span style={{ color: '#475569', fontSize: 10 }}>→</span>
+                  <span style={{ fontSize: 10, color: '#E2E8F0', fontWeight: 600, width: 55 }}>{m.after}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: m.color, marginLeft: 'auto' }}>{m.delta}</span>
                 </div>
               ))}
             </div>
