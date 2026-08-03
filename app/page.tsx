@@ -5,6 +5,7 @@ import SmartBundlePanel from '@/components/SmartBundlePanel'
 import SmartBundleDocPanel from '@/components/SmartBundleDocPanel'
 import HybridBundlePanel from '@/components/HybridBundlePanel'
 import AutoSchedulerPanel from '@/components/AutoSchedulerPanel'
+import EventGraphPanel from '@/components/EventGraphPanel'
 
 const subTabs = [
   { id: 'inbox' as const, label: '📱 Inbox UX Redesign', desc: 'Giao diện inbox mới cho KH' },
@@ -12,10 +13,11 @@ const subTabs = [
   { id: 'hybrid' as const, label: '🎯 Option 2: Main + Cross-sell', desc: 'Coverage 100% + personalized' },
   { id: 'scheduler' as const, label: '📅 Option 3: Auto-scheduler', desc: 'Tự xếp lịch campaign' },
   { id: 'bundledoc' as const, label: '📖 Tài liệu chi tiết', desc: 'Scoring, Dismiss, Rules, Alibaba' },
+  { id: 'eventgraph' as const, label: '🕸️ Financial Event Graph', desc: 'Liên kết thông báo theo entity & nhân quả' },
 ]
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'inbox' | 'smartbundle' | 'hybrid' | 'scheduler' | 'bundledoc'>('inbox')
+  const [activeTab, setActiveTab] = useState<'inbox' | 'smartbundle' | 'hybrid' | 'scheduler' | 'bundledoc' | 'eventgraph'>('inbox')
 
   return (
     <div className="min-h-screen" style={{ background: '#f8fafc' }}>
@@ -59,6 +61,7 @@ export default function Home() {
           {activeTab === 'scheduler' && <AutoSchedulerPanel />}
           {activeTab === 'bundledoc' && <SmartBundleDocPanel />}
           {activeTab === 'inbox' && <InboxUXPanel />}
+          {activeTab === 'eventgraph' && <EventGraphPanel />}
         </div>
       </div>
     </div>
